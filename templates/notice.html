@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}공지사항 - ON:AIR{% endblock %}
+{% block body_class %}notice-page{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/notice.css') }}">
+{% endblock %}
+
+{% block content %}
+  <!-- 히어로 -->
+  <section class="notice-hero">
+    <div class="crumbs">HOME · 공지</div>
+    <h1>공지사항</h1>
+    <div class="segmented">
+      <button class="seg is-active" data-cat="all">전체</button>
+      <button class="seg" data-cat="공지">공지</button>
+      <button class="seg" data-cat="홍보">홍보</button>
+      <button class="seg" data-cat="정책">정책</button>
+      <button class="seg" data-cat="점검">점검</button>
+      <button class="seg" data-cat="기타">기타</button>
+      <span class="seg-indicator"></span>
+    </div>
+  </section>
+
+  <!-- 리스트(카드형) -->
+  <section class="notice-wrap">
+    <ol class="notice-cards">
+      {% for post in posts %}
+      <li class="notice-item {% if post.pinned %}is-pinned{% endif %}"
+          data-cat="{{ post.category }}"
+          data-href="{{ url_for('notice_detail', post_id=post.id) }}">
+
+        <!-- 왼쪽: 번호/공지배지 -->
+        <div class="ni-left">
+          {% if post.pinned %}
+            <span class="badge-pill">공지</span>
+          {% else %}
+            <span class="num">{{ "%02d"|format(loop.length - loop.index0) }}</span>
+          {% endif %}
+        </div>
+
+        <!-- 본문: 제목 + 부메타 -->
+        <div class="ni-body">
+          <a class="ni-title" href="{{ url_for('notice_detail', post_id=post.id) }}">
+            {{ post.title }}
+            {% if post.attach_count and post.attach_count > 0 %}
+              <span class="ni-dot" title="첨부 {{ post.attach_count }}개"></span>
+            {% endif %}
+          </a>
+          <div class="ni-sub">
+            <span class="meta">{{ post.author }}</span>
+            <span class="dot">·</span>
+            <span class="meta">{{ post.created_at }}</span>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 칩형 통계 -->
+        <div class="ni-stats">
+          <span class="chip">조회 {{ post.views }}</span>
+          <span class="chip">첨부 {{ post.attach_count or 0 }}</span>
+        </div>
+      </li>
+      {% else %}
+      <li class="empty-card">등록된 공지가 없습니다.</li>
+      {% endfor %}
+    </ol>
+
+    <!-- ✅ 동적 페이지네이션 -->
+    <nav class="pager" aria-label="목록 페이지 탐색">
+      <a class="pg prev {% if page <= 1 %}disabled{% endif %}"
+         href="{{ url_for('notice', page=page-1) }}">‹</a>
+
+      {% for p in range(1, total_pages + 1) %}
+        <a class="pg {% if p == page %}is-active{% endif %}"
+           href="{{ url_for('notice', page=p) }}">{{ p }}</a>
+      {% endfor %}
+
+      <a class="pg next {% if page >= total_pages %}disabled{% endif %}"
+         href="{{ url_for('notice', page=page+1) }}">›</a>
+    </nav>
+  </section>
+
+  {% block scripts %}
+  <script>
+  // 카드 전체 클릭
+  document.querySelectorAll('.notice-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('a,button')) return;
+      const href = item.getAttribute('data-href');
+      if (href) window.location.href = href;
+    });
+  });
+
+  // 카테고리 필터 + 세그먼트 인디케이터 이동
+  const segs = document.querySelectorAll('.segmented .seg');
+  const indicator = document.querySelector('.segmented .seg-indicator');
+
+  function moveIndicator(btn){
+    const wrap = btn.parentElement;
+    const pad = parseFloat(getComputedStyle(wrap).paddingLeft) || 0;
+    indicator.style.width = btn.offsetWidth + 'px';
+    indicator.style.transform = `translateX(${btn.offsetLeft - pad}px)`;
+  }
+
+  segs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      segs.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      moveIndicator(btn);
+
+      const cat = btn.dataset.cat;
+      document.querySelectorAll('.notice-item').forEach(card => {
+        const c = card.dataset.cat || '전체';
+        card.style.display = (cat==='all' || cat==='전체' || c===cat) ? '' : 'none';
+      });
+    });
+  });
+
+  window.addEventListener('load', () => {
+    const act = document.querySelector('.segmented .seg.is-active') || segs[0];
+    if (act) moveIndicator(act);
+  });
+  window.addEventListener('resize', () => {
+    const act = document.querySelector('.segmented .seg.is-active') || segs[0];
+    if (act) moveIndicator(act);
+  });
+  </script>
+  {% endblock %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}오늘의 전화 팁 | ON:AIR{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/tip.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="tip-wrapper">
+  <div class="tip-card">
+    <h2 class="tip-title" id="tip-title">오늘의 전화 팁</h2>
+    <img id="tip-img" class="tip-img" src="" alt="전화 팁 이미지" />
+    <p id="tip-desc" class="tip-desc"></p>
+
+    <div class="tip-footer">
+      <p>내일은 또 다른 팁이 찾아옵니다.</p>
+      <button id="next-tip-btn" class="tip-btn">다음 팁 보기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const tips = [
+  {
+    title: "전화 받기 전, 이름부터 확인하세요",
+    img: "{{ url_for('static', filename='assets/image/tip1.png') }}",
+    desc: "상대방 이름을 먼저 확인하면 말투와 인사 톤이 자연스러워집니다."
+  },
+  {
+    title: "끊기 전 한 마디, ‘좋은 하루 보내세요’",
+    img: "{{ url_for('static', filename='assets/image/tip2.png') }}",
+    desc: "마무리 인사는 상대방에게 긍정적인 인상을 남깁니다."
+  },
+  {
+    title: "긴장될 땐 3초 심호흡",
+    img: "{{ url_for('static', filename='assets/image/tip3.png') }}",
+    desc: "전화 전 심호흡 3초면 목소리 떨림이 줄고 자신감이 생깁니다."
+  },
+  {
+    title: "통화 중 메모 습관 만들기",
+    img: "{{ url_for('static', filename='assets/image/tip4.png') }}",
+    desc: "간단한 키워드라도 적어두면 나중에 복기할 때 큰 도움이 됩니다."
+  }
+];
+
+const today = new Date().toISOString().split('T')[0];
+const lastTipDate = localStorage.getItem('lastTipDate');
+let tipIndex = localStorage.getItem('lastTipIndex');
+
+function showTip(index) {
+  const tip = tips[index];
+  document.getElementById('tip-title').textContent = tip.title;
+  document.getElementById('tip-img').src = tip.img;
+  document.getElementById('tip-desc').textContent = tip.desc;
+}
+
+if (lastTipDate !== today || tipIndex === null) {
+  tipIndex = Math.floor(Math.random() * tips.length);
+  localStorage.setItem('lastTipIndex', tipIndex);
+  localStorage.setItem('lastTipDate', today);
+}
+
+showTip(tipIndex);
+
+document.getElementById("next-tip-btn").addEventListener("click", () => {
+  tipIndex = (parseInt(tipIndex) + 1) % tips.length;
+  showTip(tipIndex);
+  localStorage.setItem('lastTipIndex', tipIndex);
+});
+</script>
+{% endblock %}

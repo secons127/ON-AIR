@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}커뮤니티 - ON:AIR{% endblock %}
+{% block body_class %}community-page{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/community.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- 배너형 헤더 (이미지) -->
+<section class="comm-hero">
+  <div class="hero-inner">
+    <h1>커뮤니티</h1>
+    <p>부담 없이 수다 떨고, 연습 팁도 가볍게 나누는 우리 동네 라운지</p>
+    <div class="chips">
+      <a class="chip {% if request.args.get('cat','all')=='all' %}is-active{% endif %}" href="{{ url_for('community', cat='all', q=request.args.get('q'), field=request.args.get('field','title')) }}">전체</a>
+      <a class="chip {% if request.args.get('cat')=='면접' %}is-active{% endif %}" href="{{ url_for('community', cat='면접', q=request.args.get('q'), field=request.args.get('field','title')) }}">면접</a>
+      <a class="chip {% if request.args.get('cat')=='전화' %}is-active{% endif %}" href="{{ url_for('community', cat='전화', q=request.args.get('q'), field=request.args.get('field','title')) }}">전화</a>
+      <a class="chip {% if request.args.get('cat')=='일상대화' %}is-active{% endif %}" href="{{ url_for('community', cat='일상대화', q=request.args.get('q'), field=request.args.get('field','title')) }}">일상대화</a>
+      <a class="chip {% if request.args.get('cat')=='리뷰' %}is-active{% endif %}" href="{{ url_for('community', cat='리뷰', q=request.args.get('q'), field=request.args.get('field','title')) }}">리뷰/후기</a>
+      <a class="chip {% if request.args.get('cat')=='자유' %}is-active{% endif %}" href="{{ url_for('community', cat='자유', q=request.args.get('q'), field=request.args.get('field','title')) }}">자유</a>
+    </div>
+  </div>
+</section>
+
+<!-- 검색 + 글쓰기 (그룹 자체가 가운데 정렬) -->
+<section class="toolbar container">
+  <div class="toolbar-inner">
+    <form class="search search-compact" action="{{ url_for('community') }}" method="get" role="search">
+      {% if request.args.get('cat') %}
+      <input type="hidden" name="cat" value="{{ request.args.get('cat') }}">
+      {% endif %}
+
+      <!-- 셀렉트 (아이콘 포함 아무 곳을 눌러도 열림) -->
+      <label class="field-select" aria-label="검색 대상 선택">
+        <select name="field" aria-label="검색 대상">
+          <option value="title"  {% if request.args.get('field','title')=='title' %}selected{% endif %}>제목</option>
+          <option value="author" {% if request.args.get('field')=='author' %}selected{% endif %}>작성자</option>
+        </select>
+        <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6.7 9.3a1 1 0 0 1 1.4 0L12 13.17l3.9-3.87a1 1 0 1 1 1.4 1.42l-4.6 4.56a1 1 0 0 1-1.4 0L6.7 10.7a1 1 0 0 1 0-1.4z" fill="currentColor"/>
+        </svg>
+      </label>
+
+      <!-- 검색 입력 -->
+      <div class="input-wrap">
+        <input type="search" name="q" value="{{ request.args.get('q','') }}" placeholder="검색어를 입력해주세요." aria-label="검색어 입력">
+        <button type="submit" class="icon-btn" aria-label="검색">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm8.707 12.293-3.4-3.4a1 1 0 0 0-1.414 1.414l3.4 3.4a1 1 0 0 0 1.414-1.414z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+
+    <!-- 검색창 오른쪽에 붙는 글쓰기 버튼 -->
+    <a class="btn primary btn-write" href="{{ url_for('community_new') }}">글쓰기</a>
+  </div>
+</section>
+
+<!-- 게시글 리스트 -->
+<section class="post-list container" aria-live="polite">
+  {% for post in posts %}
+  <article class="post-card">
+    <a class="cover" href="{{ url_for('community_detail', post_id=post.id) }}" aria-label="{{ post.title }}">
+      {% if post.thumbnail %}
+        <img src="{{ post.thumbnail }}" alt="" loading="lazy">
+      {% else %}
+        <div class="thumb-fallback" aria-hidden="true">ON:AIR</div>
+      {% endif %}
+    </a>
+
+    <div class="card-body">
+      <div class="meta-top">
+        <span class="badge">{{ post.category or '자유' }}</span>
+        {% if post.tags %}
+          <ul class="tags">
+            {% for t in post.tags[:3] %}
+              <li>#{{ t }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <h2 class="title">
+        <a href="{{ url_for('community_detail', post_id=post.id) }}">{{ post.title }}</a>
+      </h2>
+
+      <p class="excerpt">
+        {{ (post.content|striptags)[:120] }}{% if (post.content|length) > 120 %}…{% endif %}
+      </p>
+
+      <div class="meta-bottom">
+        <div class="author">
+          <div class="avatar" aria-hidden="true">{{ (post.author_name or 'U')[0]|upper }}</div>
+          <span class="name">{{ post.author_name or '사용자' }}</span>
+          <span class="dot">·</span>
+          <time datetime="{{ post.created_at|default('', true) }}">{{ post.created_human or '방금 전' }}</time>
+        </div>
+        <div class="stats">
+          <span title="좋아요">❤ {{ post.likes or 0 }}</span>
+          <span title="댓글">💬 {{ post.comments_count or 0 }}</span>
+          <span title="조회수">👁 {{ post.views or 0 }}</span>
+        </div>
+      </div>
+    </div>
+  </article>
+  {% else %}
+  <div class="empty">
+    <h3>아직 조용하네요</h3>
+    <p>오늘 있었던 일, 연습 팁, 잡담—가볍게 첫 글을 시작해볼까요?</p>
+    <a class="btn primary" href="{{ url_for('community_new') }}">글쓰기</a>
+  </div>
+  {% endfor %}
+</section>
+
+<!-- 페이지네이션 -->
+{% if pagination %}
+<nav class="pagination container" aria-label="페이지 이동">
+  {% if pagination.prev_url %}
+    <a class="page" href="{{ pagination.first_url }}" aria-label="첫 페이지">«</a>
+    <a class="page" href="{{ pagination.prev_url }}" aria-label="이전 페이지">‹</a>
+  {% else %}
+    <span class="page disabled">«</span>
+    <span class="page disabled">‹</span>
+  {% endif %}
+
+  {% for p in pagination.pages %}
+    {% if p.is_current %}
+      <span class="page is-current" aria-current="page">{{ p.num }}</span>
+    {% else %}
+      <a class="page" href="{{ p.url }}">{{ p.num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if pagination.next_url %}
+    <a class="page" href="{{ pagination.next_url }}" aria-label="다음 페이지">›</a>
+    <a class="page" href="{{ pagination.last_url }}" aria-label="마지막 페이지">»</a>
+  {% else %}
+    <span class="page disabled">›</span>
+    <span class="page disabled">»</span>
+  {% endif %}
+</nav>
+{% endif %}
+
+<!-- 플로팅 + 버튼 (조금 축소) -->
+<a class="fab" href="{{ url_for('community_new') }}" aria-label="새 글 작성">＋</a>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* 아이콘 직접 클릭 시도해도 확실히 열리도록 보강(브라우저별 showPicker 지원) */
+document.addEventListener('click', function(e){
+  const icon = e.target.closest('.field-select .chevron-icon');
+  if (!icon) return;
+  const sel = icon.parentElement.querySelector('select');
+  if (sel) {
+    sel.focus();
+    if (typeof sel.showPicker === 'function') { try { sel.showPicker(); } catch(_){} }
+    else { sel.click(); }
+  }
+});
+</script>
+{% endblock %}

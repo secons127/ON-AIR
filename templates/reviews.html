@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}수강 후기 - ON:AIR{% endblock %}
+{% block body_class %}reviews-page{% endblock %}
+
+{% block head %}
+  <!-- 공통 서브헤더(roadmap.css) + 페이지 전용 스타일 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/roadmap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/reviews.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="container">
+
+  <!-- ✅ 공통 서브헤더 (partials/subhead.html) -->
+  {% include "partials/subhead.html" %}
+
+  <!-- ===== Hero 영역 ===== -->
+  <header class="sub-hero" style="--hero:url('{{ url_for('static', filename='assets/banners/reviews.jpg') }}')">
+    <div class="inner">
+      <h1>수강 후기</h1>
+      <p>실전이 쉬워지는 이유 — 진짜 사용자들의 변화 기록</p>
+    </div>
+  </header>
+
+  <!-- ===== 필터 영역 ===== -->
+  <section class="filters">
+    <div class="pill-group">
+      <button class="pill on" data-cat="all">전체</button>
+      <button class="pill" data-cat="phone">전화</button>
+      <button class="pill" data-cat="interview">면접</button>
+      <button class="pill" data-cat="chat">채팅</button>
+      <button class="pill" data-cat="daily">일상</button>
+    </div>
+    <div class="search-inline">
+      <input type="text" placeholder="키워드로 후기 검색" aria-label="후기 검색">
+      <button aria-label="검색">🔍</button>
+    </div>
+  </section>
+
+  <!-- ===== 후기 카드 목록 ===== -->
+  <section class="review-grid">
+    <!-- 면접 -->
+    <article class="review" data-cat="interview">
+      <header>
+        <div class="avatar">A</div>
+        <div>
+          <strong>취준생 김○○</strong>
+          <div class="meta">면접 · 3주 사용</div>
+        </div>
+        <div class="stars" aria-label="별점 5점">★★★★★</div>
+      </header>
+      <p>꼬리질문 연습이 진짜 도움 됐어요. 제 답변의 군더더기와 말멈춤을 수치로 보여줘서 어디를 고쳐야 할지 명확했습니다.</p>
+      <footer>
+        <span class="tag">말끊기 ↓42%</span>
+        <span class="tag">속도 안정</span>
+        <time>2025.08.20</time>
+      </footer>
+    </article>
+
+    <!-- 전화 -->
+    <article class="review" data-cat="phone">
+      <header>
+        <div class="avatar">D</div>
+        <div>
+          <strong>고객상담 2년차</strong>
+          <div class="meta">전화 · 2주 사용</div>
+        </div>
+        <div class="stars" aria-label="별점 4점">★★★★☆</div>
+      </header>
+      <p>상황형 스크립트가 다양해서 실제 콜 시나리오에 바로 적용됐습니다. 말버릇을 줄이는 데 특히 효과를 봤어요.</p>
+      <footer>
+        <span class="tag">추임새 ↓36%</span>
+        <span class="tag">첫 멘트 자신감</span>
+        <time>2025.08.12</time>
+      </footer>
+    </article>
+
+    <!-- 채팅 -->
+    <article class="review" data-cat="chat">
+      <header>
+        <div class="avatar">C</div>
+        <div>
+          <strong>IT 스타트업 근무자</strong>
+          <div class="meta">채팅 · 2개월 사용</div>
+        </div>
+        <div class="stars" aria-label="별점 5점">★★★★★</div>
+      </header>
+      <p>AI 피드백 문장이 진짜 유용했어요. 고객 문의 채팅 연습할 때 자연스러운 톤으로 바꾸는 데 큰 도움 됐습니다.</p>
+      <footer>
+        <span class="tag">공감 멘트 향상</span>
+        <span class="tag">자연스러운 마무리</span>
+        <time>2025.08.05</time>
+      </footer>
+    </article>
+
+    <!-- 일상 -->
+    <article class="review" data-cat="daily">
+      <header>
+        <div class="avatar">S</div>
+        <div>
+          <strong>교환학생 준비</strong>
+          <div class="meta">일상 · 1개월 사용</div>
+        </div>
+        <div class="stars" aria-label="별점 5점">★★★★★</div>
+      </header>
+      <p>스몰톡이 너무 어려웠는데, 확장 질문 힌트 덕분에 대화가 길어졌어요. 장면별 패턴이 정리되어 있어 복습도 쉬웠습니다.</p>
+      <footer>
+        <span class="tag">스몰톡 자신감</span>
+        <span class="tag">확장 질문</span>
+        <time>2025.07.30</time>
+      </footer>
+    </article>
+  </section>
+
+  <!-- ===== CTA 영역 ===== -->
+  <section class="cta">
+    <h2>내 변화도 기록해볼까요?</h2>
+    <a class="btn primary" href="{{ url_for('roadmap') }}">첫 로드맵 시작하기</a>
+  </section>
+
+</main>
+
+<!-- ✅ 후기 필터 JS -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const pills = document.querySelectorAll(".pill-group .pill");
+  const reviews = document.querySelectorAll(".review");
+
+  pills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      // 🔹 버튼 스타일 초기화 및 선택 표시
+      pills.forEach(p => p.classList.remove("on"));
+      pill.classList.add("on");
+
+      const selectedCat = pill.dataset.cat;
+
+      // 🔹 후기 필터링
+      reviews.forEach(review => {
+        const reviewCat = review.dataset.cat;
+        if (selectedCat === "all" || reviewCat === selectedCat) {
+          review.style.display = "block";
+        } else {
+          review.style.display = "none";
+        }
+      });
+    });
+  });
+});
+</script>
+
+{% endblock %}

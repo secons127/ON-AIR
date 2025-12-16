@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}ON:AIR 소개{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/service.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <aside class="sidebar">
+    <a href="{{ url_for('service_page', page='service_center_home') }}" class="logo-link">
+      <div class="logo">
+        <h1>ON:AIR</h1>
+        <p>영어 실력을 위한 학습,<br>온에어에서 키워요.</p>
+      </div>
+    </a>
+
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('service_page', page='contact_inquiry') }}">고객문의</a></li>
+        <li><a href="{{ url_for('service_page', page='qna_board') }}">Q&A</a></li>
+        <li><a href="{{ url_for('service_page', page='terms_of_use') }}">사용자 이용 약관</a></li>
+        <li class="on"><a href="{{ url_for('service_page', page='about_service') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="header">
+      <h2>ON:AIR 소개</h2>
+    </div>
+
+    <section class="help-section">
+      <h1>영어 실력을 위한 학습, 온에어에서 키워요.</h1>
+      <p>ON:AIR는 최고의 영어 학습 경험을 제공합니다.<br>
+         실제 전화/면접/회화 환경을 시뮬레이션하며, AI가 즉각적인 피드백을 제공합니다.</p>
+    </section>
+  </main>
+</div>
+{% endblock %}

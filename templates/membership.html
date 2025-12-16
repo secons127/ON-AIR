@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}멤버십 안내 - ON:AIR{% endblock %}
+{% block body_class %}membership-page{% endblock %}
+
+{% block head %}
+  <!-- 공통 서브헤더 스타일(roadmap.css) + 페이지 전용 CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/roadmap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/membership.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="container">
+
+  <!-- ✅ 공통 서브헤더 -->
+  {% include "partials/subhead.html" %}
+
+  <!-- ===== Hero 영역 ===== -->
+  <header class="sub-hero" style="--hero:url('{{ url_for('static', filename='assets/banners/membership.jpg') }}')">
+    <div class="inner">
+      <h1>멤버십 안내</h1>
+      <p>AI 대화 훈련 플랫폼, ON:AIR — 나에게 맞는 훈련 플랜으로 시작하세요.</p>
+    </div>
+  </header>
+
+  <!-- ===== 멤버십 플랜 섹션 ===== -->
+  <section class="plans">
+    <!-- Free -->
+    <div class="plan">
+      <div class="head">
+        <h3>Free</h3>
+        <div class="price">₩0<span>/월</span></div>
+        <p class="desc">기초 훈련 · 기능 체험</p>
+      </div>
+      <ul class="feat">
+        <li>기본 음성 인식(STT) + 텍스트 입력</li>
+        <li>1일 10분 모의통화 체험 가능</li>
+        <li>기본 피드백 지표 (속도 · 침묵률)</li>
+        <li>최근 3회 대화 기록 열람</li>
+      </ul>
+      <a class="btn ghost" href="{{ url_for('login') }}">무료로 시작</a>
+    </div>
+
+    <!-- Standard -->
+    <div class="plan highlight">
+      <div class="badge">추천</div>
+      <div class="head">
+        <h3>Standard</h3>
+        <div class="price">₩7,900<span>/월</span></div>
+        <p class="desc">실전 대비 · 감정 분석 강화</p>
+      </div>
+      <ul class="feat">
+        <li>음성/텍스트 입력 무제한</li>
+        <li>감정 분석 그래프 · 긍/중/부정 비율 리포트</li>
+        <li>상황별 시나리오 저장 및 복습 기능</li>
+        <li>모든 훈련 기록 자동 저장 + PDF 다운로드</li>
+        <li>AI 요약/피드백 문장 제공</li>
+      </ul>
+      <a class="btn primary" href="{{ url_for('subscribe', plan='standard') }}">시작하기</a>
+    </div>
+
+    <!-- Pro -->
+    <div class="plan">
+      <div class="head">
+        <h3>Pro</h3>
+        <div class="price">₩14,900<span>/월</span></div>
+        <p class="desc">전문 코칭 · 맞춤 피드백</p>
+      </div>
+      <ul class="feat">
+        <li>AI 코칭 프롬프트 커스터마이징</li>
+        <li>음성톤/속도/호흡 등 심화 분석</li>
+        <li>팀별 코칭룸(최대 5명) + 공유 템플릿</li>
+        <li>CSV 내보내기 · API 연동 지원</li>
+        <li>우선 기술지원 및 개인화 리포트</li>
+      </ul>
+      <a class="btn ghost" href="{{ url_for('inquiry') }}">팀 문의</a>
+    </div>
+  </section>
+
+  <!-- ===== 요금제 비교 ===== -->
+  <section class="compare">
+    <h2>요금제 비교</h2>
+    <div class="table">
+      <div class="row head">
+        <div>기능</div><div>Free</div><div>Standard</div><div>Pro</div>
+      </div>
+      <div class="row"><div>음성 입력</div><div>일일 10분</div><div>무제한</div><div>무제한</div></div>
+      <div class="row"><div>감정 분석</div><div>기본(속도·침묵)</div><div>긍/중/부정 시각화</div><div>세부 감정 + 톤 분석</div></div>
+      <div class="row"><div>시나리오 저장</div><div>-</div><div>가능</div><div>공유 + 협업</div></div>
+      <div class="row"><div>대화 기록</div><div>최근 3회</div><div>무제한</div><div>무제한</div></div>
+      <div class="row"><div>리포트 다운로드</div><div>-</div><div>PDF</div><div>PDF + CSV</div></div>
+      <div class="row"><div>AI 코칭 커스터마이징</div><div>-</div><div>-</div><div>지원</div></div>
+      <div class="row"><div>팀 협업</div><div>-</div><div>-</div><div>최대 5인</div></div>
+      <div class="row"><div>기술지원</div><div>일반</div><div>일반</div><div>우선</div></div>
+    </div>
+  </section>
+
+  <!-- ===== CTA 섹션 ===== -->
+  <section class="cta">
+    <h2>나에게 맞는 훈련 방식으로 시작해요</h2>
+    <a class="btn primary" href="{{ url_for('subscribe', plan='standard') }}">Standard 구독</a>
+    <a class="btn ghost" href="{{ url_for('login') }}">무료 체험</a>
+  </section>
+
+</main>
+{% endblock %}

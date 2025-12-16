@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}수강률이 안올라가요 | ON:AIR{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/service_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="faq-layout">
+  <!-- ✅ faq-index와 동일한 사이드바 -->
+  <aside class="faq-sidebar">
+    <div class="logo-area">
+      <h1>ON:AIR</h1>
+      <p>연결이 서툰 당신에게,<br>첫 신호를 함께합니다</p>
+    </div>
+
+    <nav class="faq-nav">
+      <ul>
+        <li><a href="{{ url_for('inquiry') }}">고객문의</a></li>
+        <li><a href="{{ url_for('qna') }}">자주하는 질문</a></li>
+        <li><a href="{{ url_for('terms') }}">이용 약관</a></li>
+        <li><a href="{{ url_for('about') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ✅ 오른쪽 본문 -->
+  <section class="faq-content">
+    <p class="breadcrumb">고객센터 &gt; 자주하는 질문</p>
+
+    <div class="faq-detail green">
+      <h1><strong>수강률</strong>이 안올라가요</h1>
+      <hr>
+
+      <p>
+        학습을 진행했는데도 수강률이 오르지 않나요?<br>
+        아래 내용을 확인해 보세요 👇
+      </p>
+
+      <ol>
+        <li>
+          수업을 끝까지 시청하지 않은 경우 수강 완료로 처리되지 않습니다.<br>
+          → 각 강의의 마지막 <span class="highlight">5초</span>까지 재생을 마쳐주세요.
+        </li>
+        <li>
+          중간에 앱을 닫거나 네트워크가 끊어진 경우<br>
+          → 수강 데이터가 서버로 전송되지 않을 수 있습니다.<br>
+          재로그인 후 다시 시청해 주세요.
+        </li>
+        <li>
+          여러 기기(PC·모바일)를 동시에 사용하는 경우<br>
+          → 수강 진행률 동기화에 약간의 지연이 있을 수 있습니다.<br>
+          잠시 후 새로고침(F5) 하거나 앱을 재실행해 주세요.
+        </li>
+      </ol>
+
+      <p>
+        위 방법으로도 해결되지 않는다면<br>
+        <a href="{{ url_for('inquiry') }}" class="highlight">고객문의</a>를 통해 문의해 주세요.<br>
+        수강 내역을 확인하여 도와드리겠습니다 💬
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

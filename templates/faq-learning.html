@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}학습하기 싫어요 | ON:AIR{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/service_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="faq-layout">
+  <!-- ✅ 사이드바 (faq-index와 동일) -->
+  <aside class="faq-sidebar">
+    <div class="logo-area">
+      <h1>ON:AIR</h1>
+      <p>연결이 서툰 당신에게,<br>첫 신호를 함께합니다</p>
+    </div>
+
+    <nav class="faq-nav">
+      <ul>
+        <li><a href="{{ url_for('inquiry') }}">고객문의</a></li>
+        <li><a href="{{ url_for('qna') }}">자주하는 질문</a></li>
+        <li><a href="{{ url_for('terms') }}">이용 약관</a></li>
+        <li><a href="{{ url_for('about') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ✅ 오른쪽 본문 -->
+  <section class="faq-content">
+    <p class="breadcrumb">고객센터 &gt; 자주하는 질문</p>
+
+    <div class="faq-detail blue">
+      <h1><strong>학습하기</strong> 싫어요</h1>
+      <hr>
+
+      <p>
+        학습 의욕이 떨어지셨나요? 😔<br>
+        ON:AIR에서는 학습 동기를 회복할 수 있도록 다음과 같은 방법을 추천드립니다.
+      </p>
+
+      <ol>
+        <li>하루 5분만이라도 간단한 회화로 시작해 보세요. 작은 성취가 동기를 만듭니다.</li>
+        <li>AI 피드백 기능을 활용해 실수보다는 ‘진전된 점’을 확인하세요.</li>
+        <li>학습 난이도가 너무 높게 설정되어 있다면, 설정에서 단계를 낮춰보세요.</li>
+      </ol>
+
+      <p>
+        그래도 어려움이 지속된다면 언제든지 
+        <a href="{{ url_for('inquiry') }}" class="highlight">고객문의</a>를 통해 상담을 요청해주세요.<br>
+        ON:AIR 팀이 함께 도와드리겠습니다 💬
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

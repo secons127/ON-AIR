@@ -1,0 +1,264 @@
+/* =====================
+   전역 초기화
+===================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* =====================
+   헤더 밀림 문제 해결
+===================== */
+header.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  background: #fff;
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-link .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-link img { height: 26px; }
+.nav-menu a {
+  margin-left: 22px;
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+}
+.nav-menu a:hover { color: #465fe8; }
+
+/* =====================
+   배경 영상 + 오버레이
+===================== */
+.faq-bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  filter: brightness(0.9); /* 기본 어둡게만 */
+}
+
+/* ✅ 오버레이 요소 (HTML에 직접 넣을 예정) */
+.faq-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px); /* ✅ 블러 효과 복원 */
+  z-index: -2;
+}
+
+/* =====================
+   FAQ 레이아웃
+===================== */
+.faq-layout {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  margin-top: 80px;
+}
+
+.faq-sidebar {
+  width: 240px;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #f7f9fc 25%,
+    #eef3f8 65%,
+    #e9eff8 100%
+  );
+  padding: 32px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  mask-image: linear-gradient(to right, black 98%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 98%, transparent 100%);
+}
+
+.logo-area {
+  margin-bottom: 24px;
+  padding-left: 2px;
+}
+.logo-area h2 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.logo-area p {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.5;
+  margin-left: 1px;
+}
+
+.faq-nav {
+  margin-top: 8px;
+}
+.faq-nav ul {
+  list-style: none;
+  width: 100%;
+  padding-left: 2px;
+}
+.faq-nav li {
+  margin-bottom: 6px;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 6px;
+}
+.faq-nav a {
+  text-decoration: none;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: 0.2s;
+  display: block;
+}
+.faq-nav a:hover { color: #465fe8; }
+
+/* =====================
+   오른쪽 콘텐츠
+===================== */
+.faq-content {
+  flex: 1;
+  padding: 20px 40px 60px 30px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.faq-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.faq-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-bottom: 2px solid #111;
+  padding-bottom: 4px;
+}
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #111;
+  transition: 0.2s;
+}
+.back-btn:hover { color: #4f46e5; }
+
+.help-title h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+/* =====================
+   카드 컨테이너
+===================== */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px 60px;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 30px;
+}
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  background: #ffffff;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.8;
+  padding: 50px 24px;
+  border-radius: 12px;
+  border: 1px solid #000;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  min-height: 110px;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.yellow strong { color: #c4a11a; }
+.blue strong   { color: #5e9ea0; }
+.pink strong   { color: #c66161; }
+.green strong  { color: #4a7d57; }
+
+/* =====================
+   반응형
+===================== */
+@media screen and (max-width: 1200px) {
+  .faq-sidebar {
+    width: 220px;
+    padding: 28px 18px;
+  }
+  .faq-content {
+    padding: 50px 40px 70px 20px;
+  }
+  .card-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 40px;
+  }
+  .card {
+    padding: 40px 20px;
+    font-size: 1.4rem;
+    min-height: 130px;
+  }
+}
+@media screen and (max-width: 900px) {
+  .faq-layout {
+    flex-direction: column;
+  }
+  .faq-sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1.5px solid #d7deeb;
+    mask-image: none;
+  }
+  .faq-content {
+    padding: 40px 24px 60px;
+  }
+  .card-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .card {
+    padding: 36px 20px;
+    font-size: 1.3rem;
+    min-height: 120px;
+  }
+}

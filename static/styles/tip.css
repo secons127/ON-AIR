@@ -1,0 +1,137 @@
+/* ===========================
+   기본 스타일 초기화
+=========================== */
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background-color: #f5f8f6;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+/* ===========================
+   메인 래퍼
+=========================== */
+.tip-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+/* ===========================
+   카드 박스
+=========================== */
+.tip-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  padding: 32px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 상단 배경 반원 */
+.tip-card::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200%;
+  height: 200px;
+  background: linear-gradient(135deg, #cde6ff 0%, #eaf3ff 100%);
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  z-index: 0;
+}
+
+/* ===========================
+   제목 / 이미지 / 설명
+=========================== */
+.tip-title {
+  position: relative;
+  z-index: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.tip-img {
+  position: relative;
+  z-index: 1;
+  width: 80%;
+  max-width: 260px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.tip-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0 8px 24px;
+}
+
+/* ===========================
+   푸터 / 버튼
+=========================== */
+.tip-footer {
+  position: relative;
+  z-index: 1;
+  background: #f6f9f6;
+  border-radius: 16px;
+  padding: 16px 12px 22px;
+  border: 1px solid #e4ede4;
+}
+
+.tip-footer p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.tip-btn {
+  background: linear-gradient(135deg, #7bb5ff 0%, #5a8cff 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(90, 140, 255, 0.3);
+}
+
+.tip-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(90, 140, 255, 0.35);
+}
+
+/* ===========================
+   반응형 조정
+=========================== */
+@media (max-width: 480px) {
+  .tip-card {
+    padding: 28px 18px;
+  }
+
+  .tip-title {
+    font-size: 1.3rem;
+  }
+
+  .tip-desc {
+    font-size: 0.95rem;
+  }
+}

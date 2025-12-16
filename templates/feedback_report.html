@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>AI 피드백 리포트</title></head>
+<body style="font-family:sans-serif; padding:40px;">
+  <h2>{{ r.user }} 님의 AI 피드백 리포트</h2>
+  <p>날짜: {{ r.날짜 }}</p>
+  <hr>
+  <table border="1" cellpadding="10" cellspacing="0" style="border-collapse:collapse;">
+    <tr><th>항목</th><th>점수</th></tr>
+    <tr><td>발음</td><td>{{ r.발음 }}</td></tr>
+    <tr><td>유창성</td><td>{{ r.유창성 }}</td></tr>
+    <tr><td>자신감</td><td>{{ r.자신감 }}</td></tr>
+    <tr><td>내용 전달력</td><td>{{ r.내용 전달력 }}</td></tr>
+    <tr><td>경청 태도</td><td>{{ r.경청 태도 }}</td></tr>
+    <tr><th>평균 점수</th><th>{{ r.평균 }}</th></tr>
+  </table>
+</body>
+</html>

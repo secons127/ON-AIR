@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}정기결제 안내 | ON:AIR{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/service_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="faq-layout">
+  <!-- ✅ faq-index와 동일한 사이드바 구조 -->
+  <aside class="faq-sidebar">
+    <div class="logo-area">
+      <h1>ON:AIR</h1>
+      <p>연결이 서툰 당신에게,<br>첫 신호를 함께합니다</p>
+    </div>
+
+    <nav class="faq-nav">
+      <ul>
+        <li><a href="{{ url_for('inquiry') }}">고객문의</a></li>
+        <li><a href="{{ url_for('qna') }}">자주하는 질문</a></li>
+        <li><a href="{{ url_for('terms') }}">이용 약관</a></li>
+        <li><a href="{{ url_for('about') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ✅ 오른쪽 본문 -->
+  <section class="faq-content">
+    <p class="breadcrumb">고객센터 &gt; 자주하는 질문</p>
+
+    <div class="faq-detail yellow">
+      <h1><strong>정기결제</strong>에 오류가 있어요</h1>
+      <hr>
+
+      <p>
+        결제 과정에서 오류가 발생하셨나요?<br>
+        아래의 단계를 확인해 주세요 👇
+      </p>
+
+      <ol>
+        <li>
+          사용 중인 카드의 <span class="highlight">유효기간</span>이 만료되지 않았는지 확인해 주세요.
+        </li>
+        <li>
+          일부 카드사는 자동결제(<span class="highlight">정기결제</span>)를 기본 차단하고 있습니다.<br>
+          → 카드사 앱 또는 고객센터에서 “자동결제 허용” 설정 후 다시 시도해 주세요.
+        </li>
+        <li>
+          오류가 반복될 경우,<br>
+          <span class="highlight">[마이페이지 → 결제정보 수정]</span> 메뉴에서 새 카드 정보를 등록해 주세요.
+        </li>
+      </ol>
+
+      <p>
+        여전히 해결되지 않을 경우,<br>
+        <a href="{{ url_for('inquiry') }}" class="highlight">고객문의</a>를 통해 문의 주시면 신속히 도와드리겠습니다 💳  
+        감사합니다.
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 완료</title>
+  <!-- ✅ CSS Flask 방식 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/success.css') }}" />
+</head>
+<body>
+  <div class="complete-container">
+    <div class="complete-card">
+      <div class="image-section">
+        <img src="{{ url_for('static', filename='assets/image/success-image.jpg') }}" alt="이미지" />
+      </div>
+      <div class="text-section">
+        <div class="checkmark">✔</div>
+        <h1>회원가입이 완료 되었습니다</h1>
+        <!-- 🔹 기존 {{ name }} 대신 Firestore에서 가져오기 -->
+        <p class="username"><em id="nickname">사용자</em>  님의 가입을 축하드립니다!</p>
+        <p class="welcome-text">말이 어려운 당신을 위한<br />연습의 무대에 환영합니다.</p>
+        <div class="buttons">
+          <a href="{{ url_for('main') }}"><button class="home-btn">홈으로</button></a>
+          <a href="{{ url_for('login') }}"><button class="login-btn">로그인</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Firestore 연동 JS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBX-GDOIUCtfwXDJXC91z17vj3l4f1fojE",
+      authDomain: "onair-project-6df88.firebaseapp.com",
+      projectId: "onair-project-6df88",
+      storageBucket: "onair-project-6df88.firebasestorage.app",
+      messagingSenderId: "269903092073",
+      appId: "1:269903092073:web:6fd88d888439182f9a45f8",
+      measurementId: "G-6YK7ZS5HD5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 🔹 현재 로그인된 사용자 닉네임 가져오기
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const username = userSnap.data().username || "사용자";
+          document.getElementById("nickname").textContent = username;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

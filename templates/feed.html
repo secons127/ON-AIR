@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .feedback-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    max-width: 500px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    min-height: 350px;
+    overflow: hidden;
+  }
+
+  #loader-container { width: 100%; padding: 20px; }
+  .progress-bar { width: 100%; height: 10px; background-color: #f0f0f0; border-radius: 5px; overflow: hidden; }
+  .progress-bar-inner { width: 0%; height: 100%; background-color: #5865f2; border-radius: 5px; transition: width 0.5s ease-out; }
+  .loader-status { margin-top: 15px; font-size: 14px; color: #5865f2; }
+
+  #content-container { display: none; width: 100%; }
+  .stars { font-size: 36px; color: #ffc107; margin: 12px 0; }
+  .feedback { font-size: 16px; color: #555; line-height: 1.6; min-height: 50px; background: #f9f9f9; border-radius: 8px; padding: 16px; margin-top: 20px; text-align: left; width: 90%; margin-left: auto; margin-right: auto; }
+  .buttons { margin-top: 32px; display: flex; gap: 12px; width: 100%; }
+  .btn { text-decoration: none; font-size: 16px; font-weight: 600; padding: 12px 0; border-radius: 8px; flex: 1; transition: all 0.2s ease; border: 1px solid #d0d0d0; }
+  .btn-retry { background-color: #5865f2; color: white; border-color: #5865f2; }
+  .btn-retry:hover { background-color: #4a56d1; }
+  .btn-main { background-color: #ffffff; color: #333; }
+  .btn-main:hover { background-color: #f9f9f9; }
+</style>
+
+<div class="feedback-container">
+  <div id="loader-container">
+    <h1>AI 피드백 생성 중</h1>
+    <p>대화 내용을 분석하고 있습니다.<br>잠시만 기다려주세요...</p>
+    <div class="progress-bar">
+      <div id="progress-bar-inner" class="progress-bar-inner"></div>
+    </div>
+    <p id="loader-status" class="loader-status">0%</p>
+  </div>
+
+  <div id="content-container">
+    <h1>대화가 종료되었습니다</h1>
+    <p>대화 내용을 바탕으로 한 AI 피드백입니다.</p>
+    <div id="stars-display" class="stars"></div>
+    <div id="feedback-display" class="feedback"></div>
+    <div class="buttons">
+      <a href="{{ retry_url }}" class="btn btn-retry">다시하기</a>
+      <a href="{{ main_url }}" class="btn btn-main">메인으로</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Flask에서 전달된 세션 ID와 타입(call/chat)
+  const sessionId = "{{ session_id }}";
+  const sessionType = "{{ session_type }}";  // Flask에서 전달됨
+  const logType = sessionType === "call" ? "callLogs" : "chatLogs";  // 명시적 구분
+
+  window.onload = function() {
+    const loaderContainer = document.getElementById("loader-container");
+    const contentContainer = document.getElementById("content-container");
+    const progressBar = document.getElementById("progress-bar-inner");
+    const loaderStatus = document.getElementById("loader-status");
+
+    // 1️⃣ 로딩바 애니메이션
+    let percent = 0;
+    const interval = setInterval(() => {
+      if (percent < 90) { 
+        percent += Math.floor(Math.random() * 5) + 1;
+        if (percent > 90) percent = 90;
+        progressBar.style.width = percent + "%";
+        loaderStatus.innerText = percent + "%";
+      }
+    }, 200);
+
+    // 2️⃣ 실제 피드백 데이터 요청
+    fetchData(sessionId, interval);
+  };
+
+  async function fetchData(sessionId, interval) {
+    const loaderContainer = document.getElementById("loader-container");
+    const contentContainer = document.getElementById("content-container");
+    const progressBar = document.getElementById("progress-bar-inner");
+    const loaderStatus = document.getElementById("loader-status");
+
+    const tempKey = sessionStorage.getItem("temp_gemini_key");
+    const headers = {};
+    if (tempKey) headers['X-API-Key'] = tempKey;
+
+    try {
+      const response = await fetch(`/api/feedback_data/${sessionId}`, { method: 'GET', headers });
+      const data = await response.json();
+      clearInterval(interval);
+
+      if (!response.ok || !data.ok) throw new Error(data.feedback || "피드백 생성 실패");
+
+      progressBar.style.width = "100%";
+      loaderStatus.innerText = "100% (완료)";
+
+      setTimeout(() => {
+        populateContent(data.feedback, data.score);
+        loaderContainer.style.display = "none";
+        contentContainer.style.display = "block";
+      }, 500);
+    } catch (error) {
+      clearInterval(interval);
+      console.error("Feedback fetch error:", error);
+      populateContent(error.message || "오류 발생", 0);
+      loaderContainer.style.display = "none";
+      contentContainer.style.display = "block";
+    }
+  }
+
+  // ✅ Firestore 피드백 저장
+  async function populateContent(feedback, score) {
+    const starsDisplay = document.getElementById("stars-display");
+    const feedbackDisplay = document.getElementById("feedback-display");
+
+    const scoreInt = parseInt(score, 10) || 0;
+    starsDisplay.innerText = "★".repeat(scoreInt) + "☆".repeat(5 - scoreInt);
+    feedbackDisplay.innerText = feedback;
+
+    try {
+      const { auth, db, onAuthStateChanged, collection, getDocs, query, orderBy, limit, serverTimestamp, updateDoc } = window;
+      if (!auth || !db) {
+        console.error("❌ Firebase 초기화가 안 되어 있습니다.");
+        return;
+      }
+
+      // 🔸 사용자 인증 대기
+      await new Promise(resolve => {
+        onAuthStateChanged(auth, user => {
+          if (user) resolve(user);
+        });
+      });
+
+      const user = auth.currentUser;
+      if (!user) return console.warn("⚠️ 로그인 필요: 피드백 저장 건너뜀");
+
+      // 🔸 Flask에서 전달받은 logType(callLogs / chatLogs)에 저장
+      const userLogsRef = collection(db, "users", user.uid, logType);
+
+      // 🔸 가장 최근 로그(종료 시간 기준) 탐색
+      let snapshot = await getDocs(query(userLogsRef, orderBy("endedAt", "desc"), limit(1)));
+
+      // 🔸 만약 endedAt이 없다면 startedAt 기준으로 보조 탐색
+      if (snapshot.empty) {
+        snapshot = await getDocs(query(userLogsRef, orderBy("startedAt", "desc"), limit(1)));
+      }
+
+      if (!snapshot.empty) {
+        const latestDoc = snapshot.docs[0];
+
+        // feedback을 하위 컬렉션이 아닌 필드로 저장
+        await updateDoc(latestDoc.ref, {
+          feedback: {
+            score: scoreInt,
+            content: feedback,
+            createdAt: serverTimestamp(),
+          },
+        });
+
+        console.log(`✅ Firestore ${logType} → feedback.score 저장 완료`);
+
+        // ✅ 피드백 저장 후 배지 자동 부여 실행
+        await checkAndAwardBadges(user.uid);
+        
+      } else {
+        console.warn("⚠️ 최근 로그 문서를 찾지 못했습니다.");
+      }
+    } catch (e) {
+      console.error("❌ Firestore feedback 저장 실패:", e);
+    }
+  }
+</script>
+{% endblock %}

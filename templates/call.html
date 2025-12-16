@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}ON:AIR - 전화 시뮬레이션{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/call.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    /* 카드(몸통) 높이/폭 */
+    --call-card-min-h: 320px;
+    --call-card-w: 700px;
+  }
+  body{ background:#0f1115; color:#eaeef5; font-family:'Noto Sans KR',sans-serif; }
+
+  .stage{
+    min-height: calc(100vh - 120px);
+    display:flex; align-items:flex-start; justify-content:center;
+    padding: 230px;
+    background:
+      radial-gradient(850px 450px at 8% 18%, rgba(70,80,160,.15) 0%, rgba(70,80,160,0) 60%),
+      radial-gradient(900px 550px at 92% 85%, rgba(120,70,200,.14) 0%, rgba(120,70,200,0) 65%);
+  }
+  .call-card{
+    width: min(var(--call-card-w), 100%);
+    min-height: var(--call-card-min-h) !important;
+    height: auto !important; max-height:none !important;
+    background:#181a20; border:1px solid rgba(255,255,255,.06);
+    border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden;
+  }
+  .card-head{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px; background:#14161b;
+    border-bottom:1px solid rgba(255,255,255,.06); font-size:14px;
+  }
+  .card-head .dot{ width:10px; height:10px; border-radius:50%; background:#7aa2ff; }
+  .card-head .title{ font-weight:700; }
+  .card-head .hint{ color:#9aa4b2; margin-left:6px; }
+  .card-head .spacer{ flex:1; }
+
+  .call-container{ display:none; padding:24px; min-height:unset !important; height:auto !important; }
+  .call-container.active{ display:block; }
+
+  .center-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .avatar{ width:60px; height:60px; border-radius:50%; background:#222733;
+           display:flex; align-items:center; justify-content:center;
+           color:#cbd5e1; font-size:24px; border:1px solid rgba(255,255,255,.08); }
+  .agent-name{ font-weight:800; letter-spacing:.3px; }
+  .sub-hint{ color:#a9b1bd; font-size:13px; }
+
+  #conversation{
+    width:100%; height:220px; margin-top:6px;
+    padding:12px 12px 14px; background:#12141a; color:#e9ecf3;
+    border:1px solid rgba(255,255,255,.06); border-radius:10px; overflow-y:auto; font-size:14px;
+  }
+  .msg{ margin:6px 0; padding:0 4px; line-height:1.55; word-break:break-word; }
+  .msg.user{ text-align:right; color:#aee6ff; }
+  .msg.ai{ text-align:left; color:#ffffff; }
+  .msg.system{ text-align:center; color:#ffc107; font-style:italic; font-size:12px; }
+  .timer{ color:#94a3b8; font-size:12px; margin-top:-2px; }
+
+  .input-wrapper{ width:100%; display:flex; align-items:center; gap:8px; margin-top:10px; }
+  #user-input{
+    flex:1 1 auto; min-width:0; padding:12px 14px; background:#1b1f28; color:#fff;
+    border:1px solid rgba(255,255,255,.1); border-radius:22px; font-size:14px;
+  }
+  .pill-btn{ flex:0 0 auto; height:44px; padding:0 14px; border:none; border-radius:22px;
+             background:#394258; color:#fff; cursor:pointer; font-size:14px; }
+  .pill-btn:hover{ background:#4a5674; }
+
+  .ctrl-row{ display:flex; align-items:center; justify-content:center; gap:12px; margin-top:14px; }
+
+.call-btn{
+display:inline-flex; align-items:center; justify-content:center; gap:8px;
+min-width:120px; height:42px; padding:0 16px; border:none; border-radius:12px;
+font-weight:700; letter-spacing:.2px; color:#fff; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.25);
+white-space: nowrap;
+}
+.call-btn i{ font-size:16px; }
+.call-btn.green{ background:#2fb167; } .call-btn.green:hover{ background:#2aa25f; }
+.call-btn.red{ background:#d75959; } .call-btn.red:hover{ background:#c44c4c; }
+.call-btn.gray{ 
+background:#303646; 
+color: #ffffff; /* 2. 로드맵 버튼 글자 흰색으로 지정 */
+}
+.call-btn.gray:hover{ background:#3a4153; }
+
+  .rounds-selector{
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    color:#cbd5e1; margin:6px 0 4px;
+  }
+  .rounds-selector select, .rounds-selector input{
+    padding:7px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.12);
+    background:#1b1f28; color:#e4e7ee; font-size:14px;
+  }
+  #call-rounds-input{ width:60px; text-align:center; display:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stage">
+  <div class="call-card">
+    <div class="card-head">
+      <span class="dot"></span>
+      <span class="title">ON:AIR AI 통화 시뮬레이터</span>
+      <span class="hint">시나리오: {{ scenario or '일반 문의' }}</span>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- 대기 화면 -->
+    <div id="call-waiting" class="call-container active">
+      <div class="center-wrap">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="agent-name">ON:AIR AI</div>
+        <div class="sub-hint">전화 버튼을 눌러 연습을 시작하세요.</div>
+
+        <div class="rounds-selector">
+          <label for="call-rounds-select">대화 턴 수</label>
+          <select id="call-rounds-select" onchange="toggleCallRoundsInput()">
+            <option value="3">3 턴</option>
+            <option value="5" selected>5 턴</option>
+            <option value="7">7 턴</option>
+            <option value="10">10 턴</option>
+            <option value="custom">직접 입력</option>
+          </select>
+          <input type="number" id="call-rounds-input" min="1" max="20" value="5" placeholder="턴 수">
+        </div>
+
+        <div class="ctrl-row" style="margin-top:6px;">
+          <button class="call-btn green" onclick="startCall()"><i class="fa-solid fa-phone"></i> 수락</button>
+          <button class="call-btn red" onclick="rejectCall()"><i class="fa-solid fa-phone-slash"></i> 거절</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 통화중 화면 -->
+    <div id="call-active" class="call-container">
+      <div class="center-wrap" style="gap:10px;">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="agent-name">ON:AIR AI</div>
+        <div class="timer" id="timer">00:00</div>
+
+        <div id="conversation"></div>
+
+        <div class="input-wrapper">
+          <input id="user-input" type="text" placeholder="메시지 입력...(Enter)" onkeydown="if(event.key==='Enter') sendMessage();" />
+          <button class="pill-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+          <button class="pill-btn" onclick="startVoice()" title="음성으로 말하기"><i class="fa-solid fa-microphone"></i></button>
+        </div>
+
+        <div class="ctrl-row">
+          <button class="call-btn red" onclick="endCall(true)"><i class="fa-solid fa-phone-slash"></i> 종료</button>
+          <button class="call-btn gray"><i class="fa-solid fa-ellipsis"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 종료 화면 (거절 시는 바로 이동하므로, 수동 종료시에만 사용) -->
+    <div id="call-ended" class="call-container">
+      <div class="center-wrap" style="margin-top:6px;">
+        <div class="avatar"><i class="fa-solid fa-user-slash"></i></div>
+        <div class="agent-name" id="endMessage">통화 종료됨</div>
+        <div class="sub-hint" style="margin-top:6px;">피드백 페이지로 이동합니다...</div>
+        <div class="ctrl-row" style="margin-top:12px;">
+          <button class="call-btn green" onclick="resetCall()"><i class="fa-solid fa-rotate-left"></i> 다시하기</button>
+          <button class="call-btn gray" onclick="goRoadmap()"><i class="fa-solid fa-map"></i> 로드맵</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  let timerInterval, seconds = 0, sessionId = null, recognition;
+  let currentCallId = null;
+  const pendingMsgs = [];
+  const scenario = "{{ scenario }}";
+
+  function toggleCallRoundsInput(){
+    const select = document.getElementById("call-rounds-select");
+    const input = document.getElementById("call-rounds-input");
+    input.style.display = (select.value === "custom") ? "inline-block" : "none";
+    if(select.value === "custom") input.focus();
+  }
+
+  function appendMessage(sender, text){
+    const box = document.getElementById("conversation");
+    const div = document.createElement("div");
+    if (sender === "시스템") div.className = "msg system";
+    else div.className = "msg " + (sender === "나" ? "user" : "ai");
+    div.textContent = `${sender}: ${text}`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    saveMessageToCurrentCall(sender === "나" ? "user" : "ai", text);
+  }
+
+  async function saveMessageToCurrentCall(sender, text){
+    const user = auth.currentUser;
+    if (!user) return;
+    if (!currentCallId){ pendingMsgs.push({sender, text}); return; }
+    try{
+      await addDoc(
+        collection(db, "users", user.uid, "callLogs", currentCallId, "callMessages"),
+        { sender, text, createdAt: serverTimestamp() }
+      );
+    }catch(e){ console.error("❌ 메시지 저장 실패:", e); }
+  }
+
+  async function startCall(){
+    const roundsSelect = document.getElementById("call-rounds-select");
+    const roundsInput = document.getElementById("call-rounds-input");
+    let rounds = (roundsSelect.value === "custom")
+      ? parseInt(roundsInput.value,10)
+      : parseInt(roundsSelect.value,10);
+    if(isNaN(rounds)||rounds<1||rounds>20){ alert("턴 수는 1~20 사이로 입력해주세요."); return; }
+
+    document.getElementById("call-waiting").classList.remove("active");
+    document.getElementById("call-active").classList.add("active");
+    document.getElementById("conversation").innerHTML = "";
+    document.getElementById("user-input").focus();
+
+    seconds=0; clearInterval(timerInterval);
+    timerInterval=setInterval(()=>{
+      seconds++;
+      const m=String(Math.floor(seconds/60)).padStart(2,"0");
+      const s=String(seconds%60).padStart(2,"0");
+      document.getElementById("timer").innerText=`${m}:${s}`;
+    },1000);
+
+    try{
+      const res=await fetch("/api/call/start",{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ topic:"전화 훈련", user_role:"customer", scenario, rounds })
+      });
+      const data=await res.json();
+      sessionId=data.session_id;
+
+      const user=auth.currentUser;
+      if(user){
+        const callDoc=await addDoc(collection(db,"users",user.uid,"callLogs"),
+          { scenario, rounds, startedAt:serverTimestamp() });
+        currentCallId=callDoc.id;
+        while(pendingMsgs.length){
+          const m=pendingMsgs.shift();
+          await saveMessageToCurrentCall(m.sender,m.text);
+        }
+      }
+
+      appendMessage("AI", data.opening);
+      playTTS(data.opening);
+    }catch(e){ appendMessage("시스템",`❌ 통화 시작 실패: ${e.message}`); }
+  }
+
+  async function sendMessage(){
+    const input=document.getElementById("user-input");
+    const text=input.value.trim();
+    if(!text||!sessionId)return;
+    appendMessage("나",text);
+    input.value=""; input.disabled=true;
+
+    try{
+      const res=await fetch("/api/call/send",{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({session_id:sessionId,text})
+      });
+      const data=await res.json();
+      if(data.reply){
+        appendMessage("AI",data.reply);
+        await playTTS(data.reply);
+        if(data.ended||/좋은 하루 보내세요|이제 전화를 종료/i.test(data.reply)){
+          setTimeout(()=>endCall(false),1500);
+        }
+      }
+      input.disabled=false; input.focus();
+    }catch(e){
+      appendMessage("시스템",`❌ 메시지 전송 실패: ${e.message}`);
+      input.disabled=false;
+    }
+  }
+
+  async function playTTS(text){
+    try{
+      const res=await fetch("/api/tts",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text})
+      });
+      const data=await res.json();
+      if(data.mp3_base64){
+        const audio=new Audio("data:audio/mp3;base64,"+data.mp3_base64);
+        await audio.play();
+      }
+    }catch(e){ console.error("TTS Error:",e); }
+  }
+
+  function startVoice(){
+    if(!('webkitSpeechRecognition' in window)){
+      alert("이 브라우저는 음성인식을 지원하지 않습니다.");return;
+    }
+    recognition=new webkitSpeechRecognition();
+    recognition.lang="ko-KR";
+    recognition.start();
+    appendMessage("시스템","음성 인식 시작...");
+    recognition.onresult=function(e){
+      const text=e.results[0][0].transcript;
+      document.getElementById("user-input").value=text;
+      sendMessage();
+    }
+    recognition.onerror=function(e){
+      appendMessage("시스템","음성 인식 오류: "+e.error);
+    }
+  }
+
+  async function endCall(isManual=true){
+    clearInterval(timerInterval);
+    if(recognition) recognition.stop();
+    document.getElementById("call-active").classList.remove("active");
+    document.getElementById("call-ended").classList.add("active");
+    document.getElementById("endMessage").innerText =
+      isManual ? "통화를 종료했습니다" : "통화가 완료되었습니다";
+
+    const user=auth.currentUser;
+    if(user&&currentCallId){
+      try{
+        await updateDoc(doc(db,"users",user.uid,"callLogs",currentCallId),{
+          duration:seconds, endedAt:serverTimestamp()
+        });
+        const { addXP }=await import("/static/js/xp-level.js");
+        await addXP("call");
+      }catch(e){ console.error("❌ 종료 업데이트 실패:",e); }
+    }
+
+    setTimeout(()=>{
+      if(sessionId) window.location.href='/feedback/'+sessionId;
+      else goRoadmap();
+    },1500);
+  }
+
+  function resetCall(){
+    document.getElementById("call-ended").classList.remove("active");
+    document.getElementById("call-waiting").classList.add("active");
+    document.getElementById("conversation").innerHTML="";
+    currentCallId=null; pendingMsgs.length=0;
+  }
+
+  function goRoadmap(){ window.location.href="/roadmap"; }
+
+  // ✅ 요청사항: 거절 버튼 → 종료화면 없이 즉시 로드맵으로 이동
+  function rejectCall(){
+    window.location.href = "/roadmap";
+  }
+</script>
+{% endblock %}

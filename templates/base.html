@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}ON:AIR{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/header.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+  {% block head %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+  {% include "_header.html" %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}
+  <!-- ✅ Firebase 초기화 및 공통 기능 -->
+  <script type="module" src="{{ url_for('static', filename='js/firebase-init.js') }}"></script>
+  {% endblock %}
+</body>
+</html>

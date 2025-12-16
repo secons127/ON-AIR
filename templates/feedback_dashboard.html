@@ -1,0 +1,28 @@
+<script>
+  // Flask 데이터를 안전하게 JS 객체로 변환
+  const chartData = JSON.parse(`{{ data | tojson | safe }}`);
+
+  const ctx = document.getElementById('feedbackChart');
+  new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['발음', '유창성', '자신감', '내용 전달력', '경청 태도'],
+          datasets: [{
+              label: '피드백 점수',
+              data: [
+                  chartData['발음'],
+                  chartData['유창성'],
+                  chartData['자신감'],
+                  chartData['내용 전달력'],
+                  chartData['경청 태도']
+              ],
+              backgroundColor: 'rgba(103, 80, 164, 0.8)'
+          }]
+      },
+      options: {
+          scales: {
+              y: { beginAtZero: true, max: 100 }
+          }
+      }
+  });
+</script>

@@ -1,0 +1,161 @@
+/* 테마 변수 */
+:root{
+  --bg:#f7f9fc;
+  --ink:#0b1320;
+  --sub:#5b6572;
+  --line:rgba(0,0,0,.08);
+  --line-soft:rgba(0,0,0,.05);
+  --panel:#fff;
+  --accent:#2e6fff;
+  --accent-weak:#eaf3ff;
+  --chip:#eef3fb;
+
+  --r-xs:8px;
+  --r-sm:10px;
+  --r-md:12px;
+}
+
+/* 페이지 기본 */
+.notice-page{
+  margin:0;
+  font-family:'Pretendard','Noto Sans KR',sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+}
+
+/* 히어로 */
+.notice-hero{
+  width:100%;
+  padding:56px 6vw 28px;
+  background:
+    radial-gradient(1200px 240px at 10% 0%, var(--accent-weak), transparent 60%),
+    radial-gradient(800px 180px at 70% 0%, #f0f5ff, transparent 60%);
+  border-bottom:0;
+}
+.notice-hero .crumbs{ font-size:13px; color:var(--sub); margin-bottom:8px; }
+.notice-hero h1{
+  margin:0 0 14px;
+  font-size:clamp(24px,3.2vw,36px);
+  font-weight:900; letter-spacing:-.02em;
+}
+
+/* 카테고리 탭 */
+.segmented{
+  position:relative; display:inline-flex; gap:0; background:#fff;
+  border:1px solid var(--line); border-radius:999px; padding:4px;
+}
+.segmented .seg{
+  position:relative; z-index:1;
+  background:transparent; border:none; cursor:pointer;
+  padding:8px 14px; border-radius:999px;
+  font-size:14px; color:#2c3440;
+}
+.segmented .seg.is-active{ color:#0a2a72; font-weight:700 }
+.segmented .seg-indicator{
+  position:absolute; top:4px; left:4px; height:calc(100% - 8px);
+  width:0; border-radius:999px;
+  background:#e6f0ff; box-shadow:inset 0 0 0 2px rgba(46,111,255,.15);
+  transition:transform .28s ease,width .28s ease;
+}
+
+/* 컨테이너 */
+.notice-wrap{ max-width:1100px; margin:0 auto; padding:20px 24px 80px; }
+
+/* 카드 리스트 */
+.notice-cards{
+  list-style:none; margin:0; padding:0;
+  display:flex; flex-direction:column; gap:10px;
+}
+
+/* 카드 아이템 */
+.notice-item{
+  display:grid; grid-template-columns:96px 1fr auto;
+  align-items:center; gap:16px;
+  padding:16px 18px;
+  background:var(--panel);
+  border-bottom:1px solid var(--line-soft);
+  transition:background .2s ease;
+  cursor:pointer;
+}
+.notice-item:hover{ background:#f9fbff; }
+
+/* 왼쪽 영역 */
+.ni-left{ display:flex; align-items:center; gap:10px }
+.num{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:42px; height:28px; border-radius:var(--r-xs);
+  background:#f2f4f8; color:#394150; font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.badge-pill{
+  display:inline-block; padding:6px 10px; border-radius:999px;
+  font-weight:800; font-size:12px; color:#0a2a72;
+  background:linear-gradient(180deg,#eaf3ff,#dbeaff);
+  border:1px solid rgba(46,111,255,.35);
+}
+
+/* 본문 영역 */
+.ni-title{ color:inherit; text-decoration:none; font-weight:700; }
+.ni-title:hover{ text-decoration:underline }
+.ni-dot{
+  width:8px; height:8px; margin-left:6px; display:inline-block; border-radius:50%;
+  background:var(--accent);
+}
+.ni-sub{ margin-top:4px; color:var(--sub); font-size:13px; display:flex; gap:8px; align-items:center; }
+.ni-sub .dot{ color:#9aa3ad }
+
+/* 오른쪽 칩 */
+.ni-stats{ display:flex; gap:8px; align-items:center; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--chip); color:#203148; font-size:12px;
+  padding:6px 10px; border-radius:999px;
+}
+
+/* 상단고정 공지 스타일 */
+.notice-item.is-pinned{
+  position:relative;
+  background:linear-gradient(90deg, rgba(46,111,255,.08), transparent 30%), var(--panel);
+  border-bottom-color:rgba(46,111,255,.18);
+}
+.notice-item.is-pinned::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:linear-gradient(180deg,#2e6fff,#87b5ff);
+  border-radius:0 2px 2px 0;
+}
+
+/* 빈 상태 */
+.empty-card{
+  padding:40px; text-align:center; color:#64707f; background:var(--panel);
+  border:1px dashed var(--line);
+  border-radius:var(--r-md);
+}
+
+/* 페이지네이션 */
+.pager{
+  display:flex; gap:8px; justify-content:center; align-items:center;
+  margin-top:20px;
+}
+.pager .pg{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; padding:0;
+  border:1px solid var(--line); border-radius:var(--r-md);
+  background:#fff; color:#213149;
+  font-weight:700; line-height:1; text-decoration:none;
+  box-sizing:border-box; user-select:none;
+}
+.pager .pg:hover{ background:#f6f9ff; }
+.pager .pg.is-active{ background:#e6f0ff; border-color:#a9c3ff; }
+.pager .pg.disabled,
+.pager .pg[aria-disabled="true"]{ pointer-events:none; opacity:.45; }
+
+/* 반응형 */
+@media (max-width:900px){
+  .notice-item{ grid-template-columns:72px 1fr auto }
+  .ni-stats{ gap:6px }
+  .chip{ padding:5px 8px }
+}
+@media (max-width:720px){
+  .notice-item{ grid-template-columns:64px 1fr; grid-template-rows:auto auto; }
+  .ni-stats{ grid-column:1 / -1; justify-content:flex-end; }
+}

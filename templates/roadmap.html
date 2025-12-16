@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}추천 로드맵 - ON:AIR{% endblock %}
+{% block body_class %}roadmap-page{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/roadmap.css') }}">
+  <style>
+    /* 미니카드 재생 버튼 */
+    .mini-card{ position:relative; }
+    .mini-card .mini-play{
+      position:absolute; top:10px; right:10px;
+      width:36px; height:36px; border-radius:50%;
+      border:0; background:var(--brand); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 8px 18px rgba(91,123,255,.25), 0 0 0 3px #fff;
+      cursor:pointer;
+      transition:transform .12s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .mini-card .mini-play svg{ fill:#fff }
+    .mini-card .mini-play:hover{
+      background:var(--brand-ink);
+      transform:translateY(-1px) scale(1.04);
+      box-shadow:0 10px 22px rgba(91,123,255,.30), 0 0 0 3px #fff;
+    }
+    .mini-card .mini-play:active{ transform:translateY(0) scale(.98) }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+
+  <!-- ===== 서브헤더 ===== -->
+  <div class="subhead">
+    <div class="subhead-inner">
+      <nav class="sub-tabs">
+        <a href="{{ url_for('roadmap') }}"  class="subtab" {% if is_active('roadmap') %}aria-current="page"{% endif %}>강의실</a>
+        <a href="{{ url_for('guide') }}"    class="subtab" {% if is_active('guide') %}aria-current="page"{% endif %}>수강 안내</a>
+        <a href="{{ url_for('reviews') }}"  class="subtab" {% if is_active('reviews') %}aria-current="page"{% endif %}>수강 후기</a>
+        <a href="{{ url_for('membership') }}" class="subtab" {% if is_active('membership') %}aria-current="page"{% endif %}>멤버십 안내</a>
+      </nav>
+
+      <form class="sub-search" role="search" method="get" action="#">
+        <input id="subSearchInput" type="search" name="q" placeholder="검색어를 입력해주세요." autocomplete="off" />
+        <button type="submit" class="icon-btn">🔍</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 카테고리 -->
+  <nav class="category-nav">
+    <button class="cat is-active" data-cat="all"><span>전체</span></button>
+    <button class="cat" data-cat="phone"><span>전화</span></button>
+    <button class="cat" data-cat="interview"><span>면접</span></button>
+    <button class="cat" data-cat="chat"><span>채팅</span></button>
+    <button class="cat" data-cat="daily"><span>일상</span></button>
+  </nav>
+
+  <!-- ===== 추천 로드맵 ===== -->
+  <section>
+    <header class="section-head">
+      <h2>추천 로드맵</h2>
+      <a class="more" href="#">로드맵 상세보기</a>
+    </header>
+
+    <!-- ===== 그룹 1: 전화 ===== -->
+    <div class="roadmap-group">
+      <article class="course-main" data-cat="phone">
+        <div class="thumb">
+          <img src="{{ url_for('static', filename='assets/image/call.png') }}" alt="콜포비아 극복">
+        </div>
+        <div class="body">
+          <h3 class="title">콜포비아 극복</h3>
+          <p class="desc">기본 호흡·호출 멘트로 시작해보는 전화 첫 단계</p>
+        </div>
+      </article>
+
+      <div class="course-minis">
+        <div class="nav prev" onclick="scrollTrack(this,-1)">&#10094;</div>
+        <div class="track">
+          <article class="mini-card">
+            <div class="chips"><span class="chip">전화</span></div>
+            <h4 class="mini-title">상담 예약</h4>
+            <button class="mini-play" data-scenario="call_consult">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">전화</span></div>
+            <h4 class="mini-title">배송 문의</h4>
+            <button class="mini-play" data-scenario="call_shipping">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">전화</span></div>
+            <h4 class="mini-title">예약 변경</h4>
+            <button class="mini-play" data-scenario="call_reschedule">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+        </div>
+        <div class="nav next" onclick="scrollTrack(this,1)">&#10095;</div>
+      </div>
+    </div>
+
+    <!-- ===== 그룹 2: 채팅 ===== -->
+    <div class="roadmap-group">
+      <article class="course-main" data-cat="chat">
+        <div class="thumb">
+          <img src="{{ url_for('static', filename='assets/image/chati.png') }}" alt="채팅 문의">
+        </div>
+        <div class="body">
+          <h3 class="title">채팅으로 문의하기</h3>
+          <p class="desc">상황에 맞는 톤·매너로 자연스럽게 묻고 답하기</p>
+        </div>
+      </article>
+
+      <div class="course-minis">
+        <div class="nav prev" onclick="scrollTrack(this,-1)">&#10094;</div>
+        <div class="track">
+          <article class="mini-card">
+            <div class="chips"><span class="chip">채팅</span></div>
+            <h4 class="mini-title">교환 문의</h4>
+            <button class="mini-play" data-scenario="chat_exchange">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">채팅</span></div>
+            <h4 class="mini-title">주문 제작 확인</h4>
+            <button class="mini-play" data-scenario="chat_order">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">채팅</span></div>
+            <h4 class="mini-title">배송 지연 문의</h4>
+            <button class="mini-play" data-scenario="chat_shipping_delay">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+        </div>
+        <div class="nav next" onclick="scrollTrack(this,1)">&#10095;</div>
+      </div>
+    </div>
+
+    <!-- ===== 그룹 3: 면접 ===== -->
+    <div class="roadmap-group">
+      <article class="course-main" data-cat="interview">
+        <div class="thumb">
+          <img src="{{ url_for('static', filename='assets/image/interview.png') }}" alt="면접 질문 step1">
+        </div>
+        <div class="body">
+          <h3 class="title">면접 질문받기</h3>
+          <p class="desc">실전 대비 면접 훈련 단계별 연습</p>
+        </div>
+      </article>
+
+      <div class="course-minis">
+        <div class="nav prev" onclick="scrollTrack(this,-1)">&#10094;</div>
+        <div class="track">
+          <article class="mini-card">
+            <div class="chips"><span class="chip">면접</span></div>
+            <h4 class="mini-title">Step 1: 기본 질문</h4>
+            <button class="mini-play" data-scenario="interview_step1">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">면접</span></div>
+            <h4 class="mini-title">Step 2: 자기소개·강점</h4>
+            <button class="mini-play" data-scenario="interview_step2">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">면접</span></div>
+            <h4 class="mini-title">Step 3: 상황 질문</h4>
+            <button class="mini-play" data-scenario="interview_step3">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+        </div>
+        <div class="nav next" onclick="scrollTrack(this,1)">&#10095;</div>
+      </div>
+    </div>
+
+    <!-- ===== 그룹 4: 일상 ===== -->
+    <div class="roadmap-group">
+      <article class="course-main" data-cat="daily">
+        <div class="thumb">
+          <img src="{{ url_for('static', filename='assets/image/talk.png') }}" alt="밝은 인사">
+        </div>
+        <div class="body">
+          <h3 class="title">밝은 미소로 인사하기</h3>
+          <p class="desc">첫 만남·오랜만의 만남 모두 자연스럽게 시작하기</p>
+        </div>
+      </article>
+
+      <div class="course-minis">
+        <div class="nav prev" onclick="scrollTrack(this,-1)">&#10094;</div>
+        <div class="track">
+          <article class="mini-card">
+            <div class="chips"><span class="chip">일상</span></div>
+            <h4 class="mini-title">안부 묻기</h4>
+            <button class="mini-play" data-scenario="greeting">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">일상</span></div>
+            <h4 class="mini-title">약속 잡기</h4>
+            <button class="mini-play" data-scenario="make_appointment">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+          <article class="mini-card">
+            <div class="chips"><span class="chip">일상</span></div>
+            <h4 class="mini-title">취미 대화</h4>
+            <button class="mini-play" data-scenario="hobby_chat">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </article>
+        </div>
+        <div class="nav next" onclick="scrollTrack(this,1)">&#10095;</div>
+      </div>
+    </div>
+
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 좌우 슬라이드 기능
+  function scrollTrack(btn, dir) {
+    const track = btn.parentElement.querySelector('.track');
+    const card = track.querySelector('.mini-card');
+    if (!card) return;
+    const move = card.offsetWidth + 16;
+    track.scrollBy({ left: dir * move * 1.5, behavior: 'smooth' });
+  }
+
+  // 카테고리 필터
+  document.querySelectorAll('.category-nav .cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.category-nav .cat').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const cat = btn.dataset.cat;
+      filterCategory(cat);
+    });
+  });
+
+  // 필터 함수 분리
+  function filterCategory(cat) {
+    document.querySelectorAll('.roadmap-group').forEach(group => {
+      const main = group.querySelector('.course-main');
+      group.style.display = (cat === 'all' || main.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+
+  // URL 파라미터(cat) 감지 → 자동 필터
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('cat');
+    if (cat) {
+      document.querySelectorAll('.category-nav .cat').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.cat === cat);
+      });
+      filterCategory(cat);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+
+  // 미니카드 시나리오 연결 (하나의 규칙으로 통일)
+  document.querySelectorAll('.mini-play').forEach(btn=>{
+    btn.addEventListener('click', () => {
+      const scenario = btn.dataset.scenario;
+
+      // 전화: 상담 예약/배송 문의/예약 변경은 모두 /call 공통 API 흐름
+      if (scenario === "call_consult") {
+        window.location.href = "/call?scenario=consult";
+        return;
+      }
+      if (scenario === "call_shipping") {
+        window.location.href = "/call?scenario=shipping";
+        return;
+      }
+      if (scenario === "call_reschedule") {
+        window.location.href = "/call?scenario=reschedule";
+        return;
+      }
+
+      // 채팅: 교환/주문제작 확인과 동일하게 나머지 신규 시나리오도 모두 /chat 공통 API 흐름
+      if (scenario === "chat_exchange") {
+        window.location.href = "/chat?scenario=exchange"; return;
+      }
+      if (scenario === "chat_order") {
+        window.location.href = "/chat?scenario=order"; return;
+      }
+      if (scenario === "chat_shipping_delay") {
+        window.location.href = "/chat?scenario=shipping_delay"; return;
+      }
+      if (scenario === "interview_step1") {
+        window.location.href = "/chat?scenario=interview_step1"; return;
+      }
+      if (scenario === "interview_step2") {
+        window.location.href = "/chat?scenario=interview_step2"; return;
+      }
+      if (scenario === "interview_step3") {
+        window.location.href = "/chat?scenario=interview_step3"; return;
+      }
+      if (scenario === "greeting") {
+        window.location.href = "/chat?scenario=greeting"; return;
+      }
+      if (scenario === "make_appointment") {
+        window.location.href = "/chat?scenario=make_appointment"; return;
+      }
+      if (scenario === "hobby_chat") {
+        window.location.href = "/chat?scenario=hobby_chat"; return;
+      }
+
+      alert("이 시나리오는 아직 준비중입니다.");
+    });
+  });
+</script>
+{% endblock %}

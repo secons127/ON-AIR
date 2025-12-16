@@ -1,0 +1,42 @@
+<header class="header">
+  <a href="{{ url_for('main') }}" class="logo-link">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='assets/icons/onair_main.png') }}" alt="ON:AIR 로고">
+      <span>ON:AIR</span>
+    </div>
+  </a>
+
+  <nav class="nav-menu">
+    <!-- 🔹 로그인 상태에 따라 버튼 전환 -->
+    {% if user %}
+      <a href="{{ url_for('logout_page') }}">로그아웃</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">로그인</a>
+    {% endif %}
+
+    <a href="{{ url_for('notice') }}" 
+       {% if request.endpoint == 'notice' %}aria-current="page"{% endif %}>
+       공지사항
+    </a>
+
+    <a href="{{ url_for('community') }}" 
+       {% if request.endpoint == 'community' %}aria-current="page"{% endif %}>
+       커뮤니티
+    </a>
+
+    {% if user %}
+      <a href="{{ url_for('mypage') }}" 
+         {% if request.endpoint == 'mypage' %}aria-current="page"{% endif %}>
+         마이페이지
+      </a>
+    {% endif %}
+
+  
+
+    <a href="{{ url_for('faq_index') }}" 
+      {% if request.endpoint == 'inquiry' %}aria-current="page"{% endif %}>
+      고객센터
+    </a>
+
+  </nav>
+</header>

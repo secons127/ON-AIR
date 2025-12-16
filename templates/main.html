@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}ON:AIR{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" />
+  <style>
+    /* 개발자용 API 패널 (기본 숨김) */
+    #api-panel {
+      display:none;
+      position:fixed;right:16px;top:84px;z-index:9999;background:#fff;
+      border:1px solid #e5e7eb;border-radius:12px;padding:12px 12px 10px 12px;
+      box-shadow:0 6px 20px rgba(0,0,0,.08);width:310px;
+      font-family:ui-sans-serif,system-ui;font-size:13px;
+    }
+    #api-panel h4{margin:0 0 8px;font-size:14px;font-weight:700}
+    #api-panel small{color:#6b7280}
+    #api-panel .row{display:flex;gap:6px;margin-top:8px}
+    #api-panel input{flex:1;border:1px solid #d1d5db;border-radius:8px;padding:8px;font-size:12px}
+    #api-panel button{border:0;background:#4f46e5;color:#fff;border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer}
+    #api-panel .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;margin-left:6px}
+    #api-panel .ok{background:#ecfdf5;color:#065f46}
+    #api-panel .bad{background:#fef2f2;color:#991b1b}
+
+    /* ===============================
+       오늘의 전화 팁 (팝업 모달)
+    ================================ */
+    #tip-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    .tip-content {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 420px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: popUp 0.4s ease;
+    }
+    @keyframes popUp {
+      from {transform: translateY(30px); opacity: 0;}
+      to {transform: translateY(0); opacity: 1;}
+    }
+    .tip-content h3 {
+      color: #465fe8;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .tip-content img {
+      width: 70%;
+      max-width: 220px;
+      height: auto;
+      margin: 12px 0 16px;
+    }
+    .tip-content p {
+      font-size: 0.95rem;
+      color: #333;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .tip-btns {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .tip-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .tip-btn.more {
+      background: #465fe8;
+      color: #fff;
+    }
+    .tip-btn.more:hover {
+      background: #3347c2;
+    }
+    .tip-btn.close {
+      background: #f3f4f6;
+      color: #111;
+    }
+    .tip-btn.close:hover {
+      background: #e5e7eb;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- 배경 영상 -->
+  <video autoplay muted loop playsinline class="bg-video">
+    <source src="{{ url_for('static', filename='videos/main.mp4') }}" type="video/mp4" />
+    브라우저가 video 태그를 지원하지 않습니다.
+  </video>
+
+  <!-- ✅ 개발자용 API 상태 패널 -->
+  <div id="api-panel" aria-live="polite">
+    <h4>API 상태 <small id="api-model"></small></h4>
+    <div id="api-state" style="margin-bottom:4px">
+      <span id="api-provider" class="pill">-</span>
+      <span id="api-ok" class="pill bad">DISCONNECTED</span>
+    </div>
+    <div class="row" role="group" aria-label="API 키 입력">
+      <input id="api-key-input" type="password" placeholder="OpenAI(sk-...) 또는 Gemini(AIza...)" />
+      <button id="api-key-set" type="button">등록</button>
+    </div>
+    <small>OpenAI 키: <code>sk-...</code> / Gemini 키: <code>AIza...</code></small>
+  </div>
+
+  <main id="content">
+    <!-- Hero -->
+    <section class="section hero" aria-labelledby="hero-title">
+      <div class="text-box">
+        <img class="hero-logo reveal from-top soft"
+             src="{{ url_for('static', filename='assets/image/onair.svg') }}"
+             alt="ON:AIR 로고" />
+        <h1 id="hero-title" class="hero-title reveal from-bottom pop">
+          당신의 AI와 함께,<br>대화를 배우는 당신만의 장소
+        </h1>
+        <div class="btn-group reveal from-bottom soft" role="group" aria-label="히어로 CTA">
+          <a href="{{ url_for('roadmap') }}" class="cta-btn">지금 대화해보기</a>
+          <a href="#service-info" class="cta-btn secondary">어떤 서비스인가요?</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 이런 사람에게 추천 -->
+    <section class="section section-white" aria-labelledby="reason-title">
+      <h2 id="reason-title" class="reveal from-bottom">on:air는 이런 사람에게 필요해요</h2>
+      <ul class="reason-list stagger" style="--stagger:90ms">
+        <li class="reason reveal from-bottom"><span class="emoji">📞</span><p>전화를 걸기 전, 머릿속이 새하얘지는 분</p></li>
+        <li class="reason reveal from-bottom"><span class="emoji">🧍‍♂️🧍‍♀️</span><p>처음 만나는 사람과 무슨 말을 해야 할지 막막한 분</p></li>
+        <li class="reason reveal from-bottom"><span class="emoji">💼</span><p>취업 준비 중, 면접 말하기 연습이 필요한 분</p></li>
+        <li class="reason reveal from-bottom"><span class="emoji">🌱</span><p>사회로 나가는 것이 조금 두려운 분</p></li>
+        <li class="reason reveal from-bottom"><span class="emoji">🗣️</span><p>혼잣말로 연습하다 지친 분</p></li>
+      </ul>
+      <p class="quote reveal from-bottom soft">
+        on:air는 AI와의 대화를 통해<br />
+        <strong>“어떻게 말해야 할지”</strong>, <strong>“무엇부터 말해야 할지”</strong><br />
+        차근차근 함께 연습해요.
+      </p>
+    </section>
+
+    <!-- 작동 방식 -->
+    <section id="service-info" class="section section-light" aria-labelledby="how-title">
+      <h2 id="how-title" class="reveal from-bottom">어떻게 작동하나요?</h2>
+      <div class="steps stagger" style="--stagger:90ms">
+        <article class="step reveal from-bottom"><span class="step-num">1</span><p>상황 선택<br><small>(전화, 면접, 친구 대화 등)</small></p></article>
+        <article class="step reveal from-bottom"><span class="step-num">2</span><p>AI와 대화 시작<br><small>마치 통화처럼 자연스럽게</small></p></article>
+        <article class="step reveal from-bottom"><span class="step-num">3</span><p>감정 피드백 & 요약<br><small>분석과 요점 정리 제공</small></p></article>
+        <article class="step reveal from-bottom"><span class="step-num">4</span><p>기록으로 성장 확인<br><small>매일의 대화가 나의 일기</small></p></article>
+      </div>
+      <ul class="steps-notes stagger" style="--stagger:80ms">
+        <li class="note reveal from-bottom soft"><strong>실전 같은 시나리오</strong><span>전화 · 면접 · 친구 대화 등 상황을 고르고 바로 연습합니다.</span></li>
+        <li class="note reveal from-bottom soft"><strong>피드백 & 요약</strong><span>말 흐름과 톤을 분석해 포인트를 짚고 요점 정리를 제공합니다.</span></li>
+        <li class="note reveal from-bottom soft"><strong>기록으로 성장</strong><span>대화가 자동 기록되어 나의 변화를 한눈에 확인합니다.</span></li>
+      </ul>
+    </section>
+
+    <!-- Before & After -->
+    <section class="section section-white" aria-labelledby="ba-title">
+      <h2 id="ba-title" class="reveal from-bottom">AI 대화가 주는 변화</h2>
+      <div class="before-after">
+        <div class="ba-pair">
+          <article class="ba-box reveal from-left pop fast"><b>Before</b><p>전화 오면 심장이 두근두근</p></article>
+          <div class="arrow-wrap reveal soft fast">
+            <svg viewBox="0 0 120 10" class="arrow-svg"><defs><marker id="arrowHead-1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><polygon points="0 0,6 3,0 6"/></marker></defs><line x1="0" y1="5" x2="110" y2="5" class="arrow-line" marker-end="url(#arrowHead-1)"/></svg>
+          </div>
+          <article class="ba-box reveal from-right pop fast"><b>After</b><p>“이번엔 내가 먼저 전화해볼까?”</p></article>
+        </div>
+        <div class="ba-pair">
+          <article class="ba-box reveal from-left pop fast"><b>Before</b><p>말실수할까 봐 입을 다물던 나</p></article>
+          <div class="arrow-wrap reveal soft fast">
+            <svg viewBox="0 0 120 10" class="arrow-svg"><defs><marker id="arrowHead-2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><polygon points="0 0,6 3,0 6"/></marker></defs><line x1="0" y1="5" x2="110" y2="5" class="arrow-line" marker-end="url(#arrowHead-2)"/></svg>
+          </div>
+          <article class="ba-box reveal from-right pop fast"><b>After</b><p>생각을 말로 꺼낼 수 있는 내가 돼요</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-dark section-has-video" aria-labelledby="cta-title">
+      <video class="section-video" autoplay muted loop playsinline preload="auto"
+             poster="{{ url_for('static', filename='assets/image/friend_poster.png') }}">
+        <source src="{{ url_for('static', filename='videos/friend.mp4') }}" type="video/mp4">
+        브라우저가 video 태그를 지원하지 않습니다.
+      </video>
+      <div class="cta-box reveal from-bottom pop">
+        <h2 id="cta-title">지금 바로 시작해보세요</h2>
+        <p>작은 말 한마디의 연습이<br>세상과 연결되는 첫걸음이 됩니다.</p>
+        <a href="{{ url_for('roadmap') }}" class="cta-btn">AI와 첫 대화 시작하기</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ 오늘의 전화 팁 팝업 -->
+  <div id="tip-modal">
+    <div class="tip-content">
+      <h3 id="tip-title">오늘의 전화 팁</h3>
+      <img id="tip-img" src="" alt="전화 팁 이미지">
+      <p id="tip-desc"></p>
+      <div class="tip-btns">
+        <button class="tip-btn more" id="tip-more">더보기</button>
+        <button class="tip-btn close" id="tip-close">닫기</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  /* ===== 스크롤 애니메이션 ===== */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    targets.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.06, rootMargin: '20% 0px -15% 0px' });
+    targets.forEach(el => io.observe(el));
+    document.querySelectorAll('.stagger').forEach(group => {
+      [...group.children].forEach((child, i) => child.style.setProperty('--i', i));
+    });
+  }
+
+  /* ===== 개발자용 API 패널 ===== */
+  if (window.location.search.includes('dev=1')) {
+    document.getElementById('api-panel').style.display = 'block';
+    const elProv = document.getElementById('api-provider');
+    const elOk = document.getElementById('api-ok');
+    const elModel = document.getElementById('api-model');
+    const input = document.getElementById('api-key-input');
+    const btn = document.getElementById('api-key-set');
+
+    async function loadStatus() {
+      try {
+        const r = await fetch('/api/status');
+        const j = await r.json();
+        const ok = !!j.ok;
+        elProv.textContent = j.provider ? j.provider.toUpperCase() : 'NONE';
+        elOk.textContent = ok ? 'CONNECTED' : 'DISCONNECTED';
+        elOk.className = 'pill ' + (ok ? 'ok' : 'bad');
+        elModel.textContent = j.model ? `(${j.model})` : '';
+      } catch {}
+    }
+
+    async function setKey() {
+      const key = (input.value || '').trim();
+      if (!key) { alert('키를 입력해 주세요.'); return; }
+      try {
+        const r = await fetch('/api/key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ api_key: key })
+        });
+        const j = await r.json();
+        if (!r.ok || !j.ok) alert('유효하지 않은 키입니다.');
+        input.value = '';
+        loadStatus();
+      } catch {
+        alert('네트워크 오류가 발생했습니다.');
+      }
+    }
+
+    btn.addEventListener('click', setKey);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') setKey(); });
+    loadStatus();
+    setInterval(loadStatus, 4000);
+  }
+
+  /* ===== 오늘의 전화 팁 ===== */
+/* ===== 오늘의 전화 팁 ===== */
+const tips = [
+  { 
+    title: "전화 받기 전, 이름부터 확인하세요", 
+    img: "{{ url_for('static', filename='assets/image/tip1.png') }}", 
+    desc: "상대방 이름을 먼저 확인하면 말투와 인사 톤이 자연스러워집니다." 
+  },
+  { 
+    title: "끊기 전 한 마디, ‘좋은 하루 보내세요’", 
+    img: "{{ url_for('static', filename='assets/image/tip2.png') }}", 
+    desc: "마무리 인사는 상대방에게 긍정적인 인상을 남깁니다." 
+  },
+  { 
+    title: "긴장될 땐 3초 심호흡", 
+    img: "{{ url_for('static', filename='assets/image/tip3.png') }}", 
+    desc: "전화 전 심호흡 3초면 목소리 떨림이 줄고 자신감이 생깁니다." 
+  },
+  { 
+    title: "통화 중 메모 습관 만들기", 
+    img: "{{ url_for('static', filename='assets/image/tip4.png') }}", 
+    desc: "간단한 키워드라도 적어두면 나중에 복기할 때 큰 도움이 됩니다." 
+  }
+];
+
+
+  const modal = document.getElementById("tip-modal");
+  const titleEl = document.getElementById("tip-title");
+  const imgEl = document.getElementById("tip-img");
+  const descEl = document.getElementById("tip-desc");
+  const btnClose = document.getElementById("tip-close");
+  const btnMore = document.getElementById("tip-more");
+
+  const today = new Date().toISOString().split('T')[0];
+  const lastTipDate = localStorage.getItem('lastTipDate');
+  let tipIndex = localStorage.getItem('lastTipIndex');
+
+  /*tip-modal*/
+    function showTip(){
+      const t = tips[tipIndex];
+      titleEl.textContent = t.title;
+      imgEl.src = t.img;
+      descEl.textContent = t.desc;
+      modal.style.display = "flex";
+    }
+
+    
+    localStorage.removeItem('lastTipDate'); 
+  
+
+    if (!lastTipDate || lastTipDate!==today){
+      tipIndex = Math.floor(Math.random()*tips.length);
+      localStorage.setItem('lastTipIndex', tipIndex);
+      localStorage.setItem('lastTipDate',today);
+      showTip();
+    }
+    
+  btnClose.addEventListener("click", () => modal.style.display = "none");
+  btnMore.addEventListener("click", () => window.location.href = "{{ url_for('tip') }}");
+})();
+</script>
+{% endblock %}

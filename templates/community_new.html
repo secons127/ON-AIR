@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}새 글 작성 - 커뮤니티{% endblock %}
+{% block body_class %}community-new-page{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/community_new.css', v=9) }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="comm-hero"
+  style="--hero:url('{{ url_for('static', filename='assets/banners/community_header.jpg') }}')">
+  <div class="hero-inner">
+    <h1>새 글 작성</h1>
+    <p>편하게 이야기를 꺼내보세요. 소소한 잡담부터 꿀팁까지 좋아요!</p>
+  </div>
+</section>
+
+<!-- ▼ 좌측 본문 + (선택) 우측 옵션 패널 그리드 -->
+<main class="container editor">
+  <!-- 좌측 카드 영역 -->
+  <section class="editor-main">
+    <form method="post" enctype="multipart/form-data" class="post-form">
+
+      <!-- 제목 -->
+      <div class="form-group">
+        <label for="title">제목 <span class="req">*</span></label>
+        <input type="text" id="title" name="title" placeholder="글 제목을 입력하세요" required class="input-title">
+      </div>
+
+      <!-- 카테고리 (커스텀 셀렉트) -->
+      <div class="form-group">
+        <label for="category">카테고리 <span class="req">*</span></label>
+        <div class="field-select">
+          <select id="category" name="category" required>
+            <option value="">선택하세요</option>
+            <option value="면접">면접</option>
+            <option value="전화">전화</option>
+            <option value="일상대화">일상대화</option>
+            <option value="리뷰">리뷰/후기</option>
+            <option value="자유">자유</option>
+          </select>
+          <!-- 드롭다운 아이콘 -->
+          <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 태그 (커스텀 태그 입력 래퍼) -->
+      <div class="form-group">
+        <label for="tags">태그</label>
+        <div class="tag-input">
+          <input type="text" id="tags" name="tags" placeholder="쉼표로 구분 (예: AI, 대화, 팁)">
+        </div>
+      </div>
+
+      <!-- 썸네일 이미지 -->
+      <div class="form-group">
+        <label for="thumbnail">썸네일 이미지</label>
+        <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
+      </div>
+
+      <!-- 본문 -->
+      <div class="form-group">
+        <label for="content">본문 <span class="req">*</span></label>
+        <textarea id="content" name="content" rows="12" placeholder="편하게 작성해보세요 :)" required class="input-content"></textarea>
+      </div>
+
+      <!-- 버튼 -->
+      <div class="form-actions publish-bar">
+        <a href="{{ url_for('community') }}" class="btn ghost">취소</a>
+        <!-- 필요하면 임시저장 버튼도 추가 가능: <button type="button" class="btn success">임시저장</button> -->
+        <button type="submit" class="btn primary">등록</button>
+      </div>
+    </form>
+  </section>
+
+  {# (선택) 우측 옵션 패널을 쓰고 싶으면 아래 주석 해제해서 사용
+  <aside class="editor-side">
+    <div class="side-card">
+      <div class="card-title"><span class="num">1</span> 게시 설정</div>
+      <div class="toggle-row">
+        <div class="text">
+          <strong>댓글 허용</strong>
+          <span>댓글 작성 가능 여부</span>
+        </div>
+        <div class="toggle" data-toggle="comment"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="text">
+          <strong>비공개</strong>
+          <span>본인만 볼 수 있어요</span>
+        </div>
+        <div class="toggle" data-toggle="private"></div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="card-title"><span class="num">2</span> 발행 옵션</div>
+      <div class="form-field">
+        <div class="form-label">공개 범위</div>
+        <div class="field-select">
+          <select name="visibility">
+            <option value="public">전체 공개</option>
+            <option value="members">회원 공개</option>
+            <option value="private">비공개</option>
+          </select>
+          <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="hint">필요 시 비공개로 저장해 둘 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="side-note">
+      <span class="dot"></span>
+      작성 가이드: 제목은 30자 이내로 간결하게, 본문은 핵심부터!
+    </div>
+
+    <div class="publish-bar">
+      <button type="submit" form="postForm" class="btn success">임시저장</button>
+      <button type="submit" form="postForm" class="btn primary">바로 게시</button>
+    </div>
+  </aside>
+  #}
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,195 @@
+/* =========================
+   ON:AIR - MyPage Styles
+   ========================= */
+
+/* 레이아웃 컨테이너 */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 32px;
+  box-sizing: border-box;
+}
+
+/* 좌측 프로필 */
+.profile {
+  flex: 0 0 260px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+  height: fit-content;
+}
+
+.avatar-big {
+  background: #f2f2f2;
+  color: #333;
+  font-size: 26px;
+  font-weight: 700;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.username {
+  font-size: 20px;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.level {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.progress {
+  background: #e5e7eb;
+  border-radius: 6px;
+  height: 10px;
+  margin: 10px 0;
+}
+
+.progress-bar {
+  background: #111;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.next {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 14px;
+}
+
+.btn-edit {
+  padding: 8px 14px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-edit:hover {
+  background: #333;
+}
+
+/* 중앙 콘텐츠 */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+ul {
+  padding-left: 18px;
+  margin: 0;
+  color: #444;
+}
+ul li {
+  margin: 6px 0;
+}
+
+/* 배지 */
+.badge-list {
+  display: flex;
+  gap: 10px;
+}
+.badge {
+  background: #f4f4f5;
+  color: #111;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* 챌린지 */
+.challenges ul {
+  padding-left: 18px;
+  color: #444;
+}
+
+/* 그래프 */
+.feedback canvas {
+  max-width: 100%;
+}
+
+/* =========================
+   ✅ 최근 피드백 카드
+   ========================= */
+.feedback-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+}
+
+.feedback-list li {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 22px 14px 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border-left: 5px solid #918cec;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.feedback-list li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.feedback-list li::before {
+  content: none !important;
+  display: none !important;
+}
+
+.scenario-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.feedback-list li p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #222;
+  margin: 4px 0;
+}
+.feedback-list li span {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #777;
+}

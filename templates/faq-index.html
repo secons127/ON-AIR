@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}고객센터 | ON:AIR{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/service.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- ✅ 배경 영상 + 블러 오버레이 (layout 밖) -->
+<video autoplay muted loop playsinline class="faq-bg-video">
+  <source src="{{ url_for('static', filename='videos/faq.mp4') }}" type="video/mp4">
+</video>
+<div class="faq-overlay"></div>
+
+<!-- 🔸 전체 레이아웃 -->
+<div class="faq-layout">
+  <!-- 🔹 왼쪽 사이드바 -->
+  <aside class="faq-sidebar">
+    <div class="logo-area">
+      <h1>ON:AIR</h1>
+      <p>연결이 서툰 당신에게,<br>첫 신호를 함께합니다</p>
+    </div>
+
+    <nav class="faq-nav">
+      <ul>
+        <li><a href="{{ url_for('inquiry') }}">고객문의</a></li>
+        <li><a href="{{ url_for('qna') }}">자주하는 질문</a></li>
+        <li><a href="{{ url_for('terms') }}">이용 약관</a></li>
+        <li><a href="{{ url_for('about') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- 🔸 오른쪽 콘텐츠 -->
+  <section class="faq-content">
+    <header class="faq-header">
+      <button class="back-btn" onclick="history.back()">←</button>
+      <h2>고객센터</h2>
+    </header>
+
+    <div class="help-title">
+      <h1>무엇을 도와드릴까요?</h1>
+    </div>
+
+    <div class="card-container">
+      <a href="{{ url_for('faq_subscription') }}" class="card yellow">
+        <strong>정기결제</strong>에 오류가 있어요
+      </a>
+
+      <a href="{{ url_for('faq_learning') }}" class="card blue">
+        <strong>학습하기</strong> 싫어요
+      </a>
+
+      <a href="{{ url_for('faq_video') }}" class="card pink">
+        <strong>영상 재생</strong>이 안돼요
+      </a>
+
+      <a href="{{ url_for('faq_progress') }}" class="card green">
+        <strong>수강률</strong>이 안올라가요
+      </a>
+    </div>
+  </section>
+</div>
+{% endblock %}

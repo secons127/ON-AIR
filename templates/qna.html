@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Q&A | ON:AIR{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/service.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <aside class="sidebar">
+    <a href="{{ url_for('service_page', page='service_center_home') }}" class="logo-link">
+      <div class="logo">
+        <h1>ON:AIR</h1>
+        <p>영어 실력을 위한 학습,<br>온에어에서 키워요.</p>
+      </div>
+    </a>
+
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('service_page', page='qna_index') }}">고객문의</a></li>
+        <li class="on"><a href="{{ url_for('service_page', page='qna_board') }}">Q&A</a></li>
+        <li><a href="{{ url_for('service_page', page='terms_of_use') }}">사용자 이용 약관</a></li>
+        <li><a href="{{ url_for('service_page', page='about_service') }}">ON:AIR 소개</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="header">
+      <h2>Q&A</h2>
+    </div>
+
+    <section class="help-section">
+      <h1>자주 묻는 질문 외 다른 궁금증을 확인해보세요 💬</h1>
+      <p>
+        Q&A 게시판은 현재 준비 중입니다.<br>
+        서비스 이용 중 궁금한 점이 있다면
+        <a href="{{ url_for('service_page', page='qna_index') }}" class="highlight">고객문의</a>를 통해 먼저 문의해 주세요.
+      </p>
+
+      <div class="qna-placeholder">
+        <p>🛠️ <strong>게시판 업데이트 예정</strong></p>
+        <p>이곳에서는 사용자들이 자주 올리는 질문과 답변을 한눈에 확인할 수 있게 될 예정입니다.</p>
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

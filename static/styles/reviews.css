@@ -1,0 +1,303 @@
+/* =========================
+   ON:AIR - Reviews Page
+   integrated with roadmap.css system
+   ========================= */
+
+:root {
+  --bg:#f3f6fb;
+  --panel:#ffffff;
+  --ink:#0b1320;
+  --ink-sub:#64748b;
+  --line:#e6eef6;
+  --brand:#5b7bff;
+  --brand-ink:#465fe8;
+  --brand-color:#5b7bff;
+  --brand-light:#eef3ff;
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+  --shadow-sm:0 6px 18px rgba(15,23,42,.05);
+  --radius-lg:16px;
+  --gap:18px;
+}
+
+body.reviews-page {
+  background: var(--bg);
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  color: var(--ink);
+  margin: 0;
+}
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 18px 64px;
+}
+
+/* =========================
+   Hero Section
+   ========================= */
+.sub-hero {
+  background: var(--brand-light);
+  border-radius: 16px;
+  padding: 40px 24px;
+  margin-bottom: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sub-hero .inner {
+  position: relative;
+  z-index: 2;
+}
+
+.sub-hero h1 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.sub-hero p {
+  font-size: 16px;
+  color: var(--ink-sub);
+  line-height: 1.6;
+}
+
+/* =========================
+   Filters (pill buttons + search)
+   ========================= */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 14px 18px;
+  margin-bottom: 28px;
+}
+
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  border: 1.5px solid #dbe3ee;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.pill:hover {
+  background: #f3f6ff;
+  border-color: var(--brand);
+}
+
+.pill.on {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand-ink);
+  box-shadow: 0 4px 12px rgba(91,123,255,.3);
+}
+
+.search-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid #cfd8e3;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: #fff;
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+
+.search-inline:focus-within {
+  border-color: var(--brand);
+  box-shadow: 0 6px 16px rgba(91,123,255,.2);
+}
+
+.search-inline input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  padding: 6px;
+  min-width: 140px;
+}
+
+.search-inline button {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* =========================
+   Review Grid
+   ========================= */
+.review-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.review {
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 22px;
+  transition: transform .15s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.review:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+  border-color: #dbe3ee;
+}
+
+.review header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.review header .avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #e8ecff;
+  color: var(--brand-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.review header strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.review header .meta {
+  font-size: 13px;
+  color: var(--ink-sub);
+  margin-top: 2px;
+}
+
+.review header .stars {
+  color: #facc15;
+  font-size: 18px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.review p {
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 10px 0 16px;
+}
+
+.review footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  font-size: 13px;
+  color: var(--ink-sub);
+}
+
+.review footer .tag {
+  background: #eef3ff;
+  color: var(--brand-ink);
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+}
+
+.review footer time {
+  color: var(--ink-sub);
+  font-size: 12.5px;
+}
+
+/* =========================
+   CTA Section
+   ========================= */
+.cta {
+  text-align: center;
+  background: linear-gradient(135deg, #8bb6ff 0%, #aee6e6 100%);
+  padding: 50px 30px;
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: 0 15px 40px rgba(91, 123, 255, 0.3);
+  transition: all 0.4s ease-in-out;
+  max-width: 900px;
+  margin: 60px auto 0;
+}
+
+.cta:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.cta h2 {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.cta .btn.primary {
+  display: inline-block;
+  background: #fff;
+  color: var(--brand-color);
+  font-weight: 800;
+  padding: 14px 28px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all .3s ease;
+}
+
+.cta .btn.primary:hover {
+  background: var(--brand-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(15,23,42,0.1);
+}
+
+/* =========================
+   Responsive Adjustments
+   ========================= */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta {
+    padding: 40px 20px;
+  }
+}

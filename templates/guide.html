@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}수강 안내 - ON:AIR{% endblock %}
+{% block body_class %}guide-page{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/guide.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="container">
+
+  <!-- ✅ 공통 서브헤더 -->
+  {% include "partials/subhead.html" %}
+
+  <!-- ===== Hero 영역 ===== -->
+  <header class="sub-hero" style="--hero:url('{{ url_for('static', filename='assets/banners/guide.jpg') }}')">
+    <div class="inner">
+      <h1>수강 안내</h1>
+      <p>전화 · 면접 · 채팅 · 일상회화까지, 단계별 로드맵으로 실전 대비!</p>
+      
+      <nav class="subtabs">
+        <a href="{{ url_for('roadmap') }}" class="tab {% if request.path.rstrip('/') == url_for('roadmap').rstrip('/') %}on{% endif %}">강의실</a>
+        <a href="{{ url_for('guide') }}" class="tab {% if request.path.rstrip('/') == url_for('guide').rstrip('/') %}on{% endif %}">수강 안내</a>
+        <a href="{{ url_for('reviews') }}" class="tab {% if request.path.rstrip('/') == url_for('reviews').rstrip('/') %}on{% endif %}">수강 후기</a>
+        <a href="{{ url_for('membership') }}" class="tab {% if request.path.rstrip('/') == url_for('membership').rstrip('/') %}on{% endif %}">멤버십 안내</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== 빠른 요약 ===== -->
+  <section class="info-cards">
+    <h2>빠른 요약</h2>
+
+    <article class="card fade-in">
+      <h3>학습 흐름</h3>
+      <ul class="bullets">
+        <li><b>진단</b>: 1분 음성/텍스트로 현재 수준 파악</li>
+        <li><b>로드맵 추천</b>: 목적에 맞게 자동 추천</li>
+        <li><b>실습</b>: 시나리오형 모의 대화 + 즉시 피드백</li>
+        <li><b>복습</b>: 대화 기록, 키워드, 약점 리포트</li>
+      </ul>
+    </article>
+
+    <article class="card fade-in">
+      <h3>필요한 준비물</h3>
+      <ul class="bullets">
+        <li>마이크(노트북 내장 가능), 안정적 네트워크</li>
+        <li>크롬/엣지 최신 버전 권장</li>
+        <li>모바일은 최신 안드로이드/아이폰 브라우저 권장</li>
+      </ul>
+    </article>
+
+    <article class="card fade-in">
+      <h3>권장 이용 방법</h3>
+      <ul class="bullets">
+        <li>하루 <b>10~20분</b> 가볍게, 주 3~4회</li>
+        <li>실제 통화/면접 대본을 <b>나만의 스크립트</b>로 저장</li>
+        <li>약점 태그(말끊기/침묵/속도/추임새)를 체크하며 개선</li>
+      </ul>
+    </article>
+  </section>
+
+  <!-- ===== 학습 절차 ===== -->
+  <section class="steps">
+    <h2>이렇게 사용해요</h2>
+    <ol class="step-list">
+      <li class="fade-in">
+        <div class="icon">①</div>
+        <div>
+          <h4>목표 선택</h4>
+          <p>전화/면접/채팅/일상 중 목표를 고르면 난이도와 길이가 자동 구성됩니다.</p>
+        </div>
+      </li>
+      <li class="fade-in">
+        <div class="icon">②</div>
+        <div>
+          <h4>실전형 시뮬레이션</h4>
+          <p>질문 변형·예상 꼬리질문까지 반영된 모의 대화로 실제처럼 연습합니다.</p>
+        </div>
+      </li>
+      <li class="fade-in">
+        <div class="icon">③</div>
+        <div>
+          <h4>즉시 피드백</h4>
+          <p>발화 속도, 망설임, 핵심 키워드 누락을 지표와 예문으로 바로 피드백합니다.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===== 추천 커리큘럼 ===== -->
+  <section class="curriculum">
+    <h2>추천 커리큘럼</h2>
+
+    <article class="mini fade-in" data-cat="phone">
+      <h5>콜포비아 극복</h5>
+      <p>첫 통화 멘트, 목적 정리, 호흡/속도 조절</p>
+    </article>
+    <article class="mini fade-in" data-cat="interview">
+      <h5>면접 기본기</h5>
+      <p>자기소개 → 직무 적합도 → 꼬리질문 대응</p>
+    </article>
+    <article class="mini fade-in" data-cat="chat">
+      <h5>채팅 스몰톡</h5>
+      <p>첫 멘트, 공감·확장 질문, 마무리 멘트</p>
+    </article>
+    <article class="mini fade-in" data-cat="daily">
+      <h5>일상 회화</h5>
+      <p>친구·가족·상황별 스크립트, 자연스러운 추임새</p>
+    </article>
+
+    <div class="center-btn-container fade-in">
+      <a class="btn ghost" href="{{ url_for('roadmap') }}">로드맵 전체 보기</a>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="faq">
+    <h2>자주 묻는 질문</h2>
+    <details class="fade-in">
+      <summary>모바일로도 사용할 수 있나요?</summary>
+      <p>가능합니다. 다만 마이크 권한 허용과 최신 브라우저 사용을 권장합니다.</p>
+    </details>
+    <details class="fade-in">
+      <summary>녹음 데이터는 어떻게 사용되나요?</summary>
+      <p>학습 피드백을 위한 분석에만 사용되며, 설정에서 언제든 삭제할 수 있습니다.</p>
+    </details>
+    <details class="fade-in">
+      <summary>완전 초보도 따라갈 수 있나요?</summary>
+      <p>네. 1분 진단과 단계별 스크립트, 자동 힌트로 천천히 익힐 수 있어요.</p>
+    </details>
+  </section>
+  
+</main>
+
+<!-- ===== CTA 영역 ===== -->
+<section class="cta fade-in">
+  <div class="inner">
+    <h2>지금 바로 연습을 시작해요</h2>
+    <a class="btn primary" href="{{ url_for('roadmap') }}">로드맵 선택하기</a>
+  </div>
+</section>
+
+<!-- ===== Fade-in 애니메이션 스크립트 ===== -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        } else {
+          entry.target.classList.remove('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    });
+
+    document.querySelectorAll('.fade-in').forEach(element => {
+      observer.observe(element);
+    });
+  });
+
+  // ✅ 추천 커리큘럼 클릭 시 로드맵 해당 카테고리로 이동
+  document.querySelectorAll('.curriculum .mini').forEach(card => {
+    card.addEventListener('click', () => {
+      const cat = card.dataset.cat;
+      window.location.href = `/roadmap?cat=${cat}`;
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>ON:AIR - 로그인</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+  <!-- 🎬 배경 영상 -->
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='videos/friend.mp4') }}" type="video/mp4">
+  </video>
+
+  <div class="container">
+    <div class="auth-stage">
+      <div class="auth-card show-front" id="authCard">
+
+        <!-- 로그인 -->
+        <div class="login-wrapper face front">
+          <div class="login-left">
+            <h2>로그인</h2>
+            <form id="login-form">
+              <input type="email" placeholder="이메일" id="login-email" required>
+              <input type="password" placeholder="비밀번호" id="login-password" required>
+              <div class="remember-wrap">
+                <label><input type="checkbox" name="remember" /> remember ID</label>
+              </div>
+              <button type="submit">로그인</button>
+            </form>
+
+            <div class="links">
+              아이디/비밀번호 찾기 | <a href="javascript:void(0)" id="goSignupLink">회원가입</a>
+            </div>
+
+            <!-- Google 로그인 버튼 (클래스로 변경) -->
+            <div class="sns-icons single google-login-btn">
+              <img src="{{ url_for('static', filename='assets/icons/google.png') }}" alt="Google 로그인">
+              <span>Google 계정으로 로그인하기</span>
+            </div>
+            <div class="sns-warning">
+              Google 계정으로 로그인하실 경우,<br>일부 서비스 이용에 제한이 있을 수 있습니다.
+            </div>
+          </div>
+
+          <div class="login-right">
+            <img class="mic-float" src="{{ url_for('static', filename='assets/icons/mic_logo.png') }}" alt="마이크 로고" />
+            <h1 id="brandTitle" class="brand">ON:AIR</h1>
+            <div class="slogan-wrap">
+              <div class="slogan-inner">
+                <p class="slogan-text">말이 어려운 당신을 위한, 연습의 무대</p>
+                <p class="desc-sub">— ON:AIR.</p>
+              </div>
+            </div>
+            <button type="button" id="goSignup">회원가입</button>
+          </div>
+        </div>
+
+        <!-- 회원가입 -->
+        <div class="login-wrapper face back">
+          <div class="login-left">
+            <h2>회원가입</h2>
+            <form id="signup-form">
+              <input type="text" placeholder="아이디" id="signup-username" required>
+              <input type="email" placeholder="이메일" id="signup-email" required>
+              <input type="password" placeholder="비밀번호" id="signup-password" required>
+              <input type="password" placeholder="비밀번호 확인" id="signup-password2" required>
+              <button type="submit">가입하기</button>
+            </form>
+
+            <div class="links">
+              이미 계정이 있으신가요? <a href="javascript:void(0)" id="goLoginLink">로그인</a>
+            </div>
+
+            <!-- 회원가입 페이지 Google 로그인 버튼도 동일한 클래스 -->
+            <div class="sns-icons single google-login-btn">
+              <img src="{{ url_for('static', filename='assets/icons/google.png') }}" alt="Google 로그인">
+              <span>Google 계정으로 로그인하기</span>
+            </div>
+            <div class="sns-warning">
+              Google 계정으로 로그인/가입하실 경우,<br>일부 서비스 이용에 제한이 있을 수 있습니다.
+            </div>
+          </div>
+
+          <div class="login-right">
+            <img class="mic-float" src="{{ url_for('static', filename='assets/icons/mic_logo.png') }}" alt="마이크 로고" />
+            <h1 class="brand">WELCOME</h1>
+            <div class="slogan-wrap">
+              <div class="slogan-inner">
+                <p class="slogan-text">지금 바로 당신만의 첫 연습을 시작해요.</p>
+                <p class="desc-sub">— ON:AIR.</p>
+              </div>
+            </div>
+            <button type="button" id="goLogin">로그인</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <p id="message" style="text-align:center; color:white; font-weight:bold;"></p>
+
+  <!-- 플립 제어 -->
+  <script>
+    const authCard = document.getElementById('authCard');
+    const goSignup = document.getElementById('goSignup');
+    const goSignupLink = document.getElementById('goSignupLink');
+    const goLogin = document.getElementById('goLogin');
+    const goLoginLink = document.getElementById('goLoginLink');
+
+    function lockToBack() { authCard.classList.remove('show-front'); authCard.classList.add('show-back'); }
+    function lockToFront() { authCard.classList.remove('show-back'); authCard.classList.add('show-front'); }
+    function flipRight() { authCard.classList.add('flip-right'); setTimeout(() => lockToBack(), 600); }
+    function flipLeft() { authCard.classList.add('flip-left'); setTimeout(() => lockToFront(), 600); }
+
+    if (goSignup) goSignup.addEventListener('click', flipRight);
+    if (goSignupLink) goSignupLink.addEventListener('click', flipRight);
+    if (goLogin) goLogin.addEventListener('click', flipLeft);
+    if (goLoginLink) goLoginLink.addEventListener('click', flipLeft);
+
+    (function initByQuery(){
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'signup') lockToBack();
+      else lockToFront();
+    })();
+
+    if (document.referrer && !sessionStorage.getItem("prevUrl")) {
+      sessionStorage.setItem("prevUrl", document.referrer);
+    }
+  </script>
+
+  <!-- Firebase Auth 통합 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+    import { 
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+      GoogleAuthProvider, signInWithPopup 
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBX-GDOIUCtfwXDJXC91z17vj3l4f1fojE",
+      authDomain: "onair-project-6df88.firebaseapp.com",
+      projectId: "onair-project-6df88",
+      storageBucket: "onair-project-6df88.appspot.com",
+      messagingSenderId: "269903092073",
+      appId: "1:269903092073:web:6fd88d888439182f9a45f8",
+      measurementId: "G-6YK7ZS5HD5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const messageEl = document.getElementById("message");
+
+    // 일반 로그인(이메일,비번)
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const idToken = await userCredential.user.getIdToken();
+        const res = await fetch("/api/login", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "세션 설정 실패");
+        const prevUrl = sessionStorage.getItem("prevUrl") || "/";
+        sessionStorage.removeItem("prevUrl");
+        window.location.href = prevUrl;
+      } catch (error) {
+        messageEl.textContent = "로그인 실패: " + error.message;
+      }
+    });
+
+    // 회원가입
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("signup-username").value;
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+      const password2 = document.getElementById("signup-password2").value;
+      if (password !== password2) return messageEl.textContent = "비밀번호가 일치하지 않습니다.";
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await setDoc(doc(db, "users", user.uid), {
+          username, email, avatar_url: user.photoURL || "",
+          subscriber: false, level: 1, xp: 0,
+          createdAt: new Date()
+        });
+        const idToken = await user.getIdToken();
+        const res = await fetch("/api/login", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "세션 설정 실패");
+        const prevUrl = sessionStorage.getItem("prevUrl") || "/";
+        sessionStorage.removeItem("prevUrl");
+        window.location.href = prevUrl;
+      } catch (error) {
+        messageEl.textContent = "회원가입 실패: " + error.message;
+      }
+    });
+
+    // Google 로그인
+    const googleBtns = document.querySelectorAll(".google-login-btn");
+    googleBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          const ref = doc(db, "users", user.uid);
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            await setDoc(ref, {
+              username: user.displayName || "New User",
+              email: user.email,
+              avatar_url: user.photoURL || "",
+              subscriber: false,
+              createdAt: new Date()
+            });
+          }
+          const idToken = await user.getIdToken();
+          const res = await fetch("/api/login", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken })
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || "세션 설정 실패");
+          const prevUrl = sessionStorage.getItem("prevUrl") || "/";
+          sessionStorage.removeItem("prevUrl");
+          window.location.href = prevUrl;
+        } catch (error) {
+          messageEl.textContent = "Google 로그인 실패: " + error.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

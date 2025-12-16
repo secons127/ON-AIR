@@ -1,0 +1,189 @@
+/* =====================
+   전역 초기화
+===================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* =====================
+   FAQ 레이아웃
+===================== */
+.faq-layout {
+  display: flex;
+  min-height: 100vh;
+  background: transparent;
+}
+
+/* =====================
+   사이드바 (faq-index 동일)
+===================== */
+.faq-sidebar {
+  width: 240px;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #f7f9fc 25%,
+    #eef3f8 65%,
+    #e9eff8 100%
+  );
+  padding: 32px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  mask-image: linear-gradient(to right, black 98%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 98%, transparent 100%);
+}
+
+.logo-area {
+  margin-bottom: 24px;
+  padding-left: 2px;
+}
+.logo-area h2 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.logo-area p {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.5;
+  margin-left: 1px;
+}
+
+.faq-nav {
+  margin-top: 8px;
+}
+.faq-nav ul {
+  list-style: none;
+  width: 100%;
+  padding-left: 2px;
+}
+.faq-nav li {
+  margin-bottom: 6px;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 6px;
+}
+.faq-nav a {
+  text-decoration: none;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: 0.2s;
+  display: block;
+}
+.faq-nav a:hover { color: #465fe8; }
+
+/* =====================
+   오른쪽 본문
+===================== */
+.faq-content {
+  flex: 1;
+  padding: 60px 80px;
+  background: #fff;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 25px;
+}
+
+/* =====================
+   FAQ 상세 본문
+===================== */
+.faq-detail {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 50px 60px;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.05);
+  line-height: 1.8;
+  max-width: 900px;
+}
+
+.faq-detail h1 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.faq-detail hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 15px 0 25px;
+}
+
+.faq-detail p {
+  font-size: 15px;
+  color: #333;
+  margin: 10px 0;
+}
+
+.faq-detail ol {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.faq-detail li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.highlight {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* =====================
+   페이지별 포인트 색상
+===================== */
+.faq-detail.yellow strong,
+.faq-detail.yellow .highlight {
+  color: #c4a11a;
+}
+
+.faq-detail.blue strong,
+.faq-detail.blue .highlight {
+  color: #5e9ea0;
+}
+
+.faq-detail.pink strong,
+.faq-detail.pink .highlight {
+  color: #c66161;
+}
+
+.faq-detail.green strong,
+.faq-detail.green .highlight {
+  color: #4a7d57;
+}
+
+/* =====================
+   반응형
+===================== */
+@media screen and (max-width: 900px) {
+  .faq-layout {
+    flex-direction: column;
+  }
+  .faq-sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1.5px solid #d7deeb;
+    mask-image: none;
+  }
+  .faq-content {
+    padding: 36px 24px;
+  }
+  .faq-detail {
+    padding: 36px 24px;
+    font-size: 0.95rem;
+  }
+}

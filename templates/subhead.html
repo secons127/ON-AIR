@@ -1,0 +1,15 @@
+<div class="subhead">
+  <div class="subhead-inner">
+    <nav class="sub-tabs">
+      <a href="{{ url_for('roadmap') }}"  class="subtab" {% if is_active('roadmap') %}aria-current="page"{% endif %}>강의실</a>
+      <a href="{{ url_for('guide') }}"    class="subtab" {% if is_active('guide') %}aria-current="page"{% endif %}>수강 안내</a>
+      <a href="{{ url_for('reviews') }}"  class="subtab" {% if is_active('reviews') %}aria-current="page"{% endif %}>수강 후기</a>
+      <a href="{{ url_for('membership') }}" class="subtab" {% if is_active('membership') %}aria-current="page"{% endif %}>멤버십 안내</a>
+    </nav>
+
+    <form class="sub-search" role="search" method="get" action="#">
+      <input id="subSearchInput" type="search" name="q" placeholder="검색어를 입력해주세요." autocomplete="off" />
+      <button type="submit" class="icon-btn">🔍</button>
+    </form>
+  </div>
+</div>

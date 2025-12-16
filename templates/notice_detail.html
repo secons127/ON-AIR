@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - 공지사항{% endblock %}
+{% block body_class %}notice-page{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/notice_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+  <!-- 히어로 (crumbs 제거) -->
+  <section class="notice-hero">
+    <h1>공지사항</h1>
+  </section>
+
+  <!-- 본문 -->
+  <main class="post-wrap">
+    <article class="post-card">
+
+      <!-- 제목/메타/액션 -->
+      <header class="post-head">
+        <div class="post-tags">
+          {% if post.pinned %}<span class="badge-pill">공지</span>{% endif %}
+          {% if post.category %}<span class="meta-chip">{{ post.category }}</span>{% endif %}
+        </div>
+
+        <h2 class="post-title">{{ post.title }}</h2>
+
+        <div class="post-meta">
+          <span class="author">{{ post.author }}</span>
+          <span class="dot">·</span>
+          <span class="date">{{ post.created_at }}</span>
+          <span class="dot">·</span>
+          <span class="views">조회 {{ post.views }}</span>
+     
+          <button type="button" class="btn-line" id="copyLinkBtn">링크 복사</button>
+        </div>
+      </header>
+
+      <hr class="post-sep">
+
+      <!-- 내용 -->
+      <section class="post-body">
+        {% if post.content %}
+          {{ post.content | safe }}
+        {% else %}
+          <p>상세 내용이 여기에 들어갑니다. (DB 연결 후 실제 본문 출력)</p>
+        {% endif %}
+      </section>
+
+      <!-- 첨부파일 -->
+      <section class="post-files">
+        <h3 class="post-subtitle">첨부파일</h3>
+        {% if files is defined and files %}
+          <ul class="attach-list">
+            {% for f in files %}
+              <li class="attach-item">
+                <a class="attach-link" href="{{ f.url or url_for('download_file', attachment_id=f.id) }}" download>
+                  {{ f.original_name }}
+                </a>
+                {% if f.size %}
+                  <span class="attach-size">{{ (f.size/1024)|round(1) }} KB</span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="attach-empty">첨부 파일이 없습니다.</div>
+        {% endif %}
+      </section>
+
+    </article>
+  </main>
+
+  <!-- 카드 밖 하단 독립 버튼 -->
+  <div class="bottom-action">
+    <a href="{{ url_for('notice') }}" class="btn-main">목록으로</a>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // 링크 복사
+    document.getElementById('copyLinkBtn')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('링크가 복사되었습니다.');
+      } catch (e) {
+        alert('복사에 실패했어요. 브라우저 설정을 확인해주세요.');
+      }
+    });
+  </script>
+{% endblock %}
